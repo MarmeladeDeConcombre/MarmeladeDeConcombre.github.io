@@ -59,13 +59,11 @@ function renderDetail(i) {
 
   d.innerHTML = `
     <div class="detail-head">
-      <div>
-        <div class="detail-day-label">${day.label}</div>
-        <div class="detail-title">${day.title}</div>
-        <div class="detail-meta">
-          <span class="day-tag ${day.tagClass}">${day.tagTxt}</span>
-          <span class="duration-badge">${day.duration}</span>
-        </div>
+      <div class="detail-day-label">${day.label}</div>
+      <div class="detail-title">${day.title}</div>
+      <div class="detail-meta">
+        <span class="day-tag ${day.tagClass}">${day.tagTxt}</span>
+        <span class="duration-badge">${day.duration}</span>
       </div>
     </div>
     ${sectionsHTML}
