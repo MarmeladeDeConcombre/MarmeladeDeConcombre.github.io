@@ -1,158 +1,38 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Programme Musculation Haut du Corps</title>
-<style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: system-ui, sans-serif; background: #f5f5f5; color: #1a1a1a; padding: 1rem; }
-  h1 { font-size: 20px; font-weight: 500; margin-bottom: 1.5rem; }
-  .week-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; margin-bottom: 1.5rem; }
-  .day-card { background: white; border: 0.5px solid #ddd; border-radius: 12px; padding: 12px; cursor: pointer; transition: border-color 0.15s; }
-  .day-card:hover { border-color: #aaa; }
-  .day-card.active { border: 2px solid #534AB7; }
-  .day-card.rest { background: #f9f9f9; cursor: default; }
-  .day-label { font-size: 11px; color: #888; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; }
-  .day-title { font-size: 14px; font-weight: 500; }
-  .day-badge { display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 99px; margin-top: 5px; }
-  .badge-upper { background: #EEEDFE; color: #3C3489; }
-  .badge-full { background: #FAECE7; color: #712B13; }
-  .badge-rest { background: #f0f0f0; color: #888; border: 0.5px solid #ddd; }
-  .detail-panel { background: white; border: 0.5px solid #ddd; border-radius: 12px; padding: 1.25rem; }
-  .detail-header { display: flex; align-items: baseline; gap: 12px; margin-bottom: 1rem; }
-  .detail-title { font-size: 18px; font-weight: 500; }
-  .detail-sub { font-size: 13px; color: #888; }
-  .exercise-list { display: flex; flex-direction: column; gap: 10px; }
-  .ex-row { display: grid; grid-template-columns: 1fr auto; align-items: start; gap: 8px; padding: 10px 12px; background: #f7f7f7; border-radius: 8px; }
-  .ex-name { font-size: 14px; font-weight: 500; }
-  .ex-note { font-size: 12px; color: #666; margin-top: 2px; }
-  .ex-sets { font-size: 13px; font-weight: 500; color: #534AB7; white-space: nowrap; text-align: right; }
-  .ex-weight { font-size: 11px; color: #999; text-align: right; margin-top: 2px; }
-  .section-label { font-size: 11px; font-weight: 500; color: #999; text-transform: uppercase; letter-spacing: 0.07em; margin: 1rem 0 6px; }
-  .tip-box { margin-top: 1rem; background: #EEEDFE; border-radius: 8px; padding: 10px 14px; font-size: 13px; color: #3C3489; }
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Programme Musculation — Haut du Corps</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-<h1>Programme musculation haut du corps — débutant</h1>
-<div class="week-grid" id="weekGrid"></div>
-<div class="detail-panel" id="detailPanel"></div>
+  <div class="bg-grid"></div>
 
-<script>
-const days = [
-  { label: "Lundi", title: "Pecs & Triceps", badge: "badge-upper", badgeTxt: "Haut du corps", type: "upper",
-    sections: [
-      { name: "Exercices principaux", exs: [
-        { name: "Pompes (mains larges)", note: "Sur les genoux si besoin – focus sur les pecs", sets: "3 × 8-12 rép.", weight: "Poids du corps" },
-        { name: "Développé couché haltères", note: "Allongé sur sol, descendre les coudes à 45°", sets: "3 × 10-12 rép.", weight: "2 × 4 kg (2+2kg)" },
-        { name: "Écartés haltères", note: "Légère flexion des coudes, contrôle la descente", sets: "3 × 12 rép.", weight: "2 × 4 kg" },
-        { name: "Extensions triceps haltère", note: "Bras derrière la tête, coudes près des oreilles", sets: "3 × 12 rép.", weight: "1 × 4 kg" },
-        { name: "Pompes serrées", note: "Mains sous les épaules, coudes collés au corps", sets: "2 × 8-10 rép.", weight: "Poids du corps" },
-      ]},
-      { name: "Cardio final", exs: [
-        { name: "Burpees ou jumping jacks", note: "3 séries de 30 secondes, 20s de repos entre", sets: "3 × 30 sec", weight: "Cardio" },
-      ]},
-    ],
-    tip: "Repos de 60-90 sec entre chaque série. Si tu fais les 12 reps facilement, ajoute 1 kg la prochaine fois."
-  },
-  { label: "Mardi", title: "Repos actif", badge: "badge-rest", badgeTxt: "Récupération", type: "rest",
-    tip: "Marche 20-30 min, étirements doux. Évite l'inactivité totale mais ne force pas."
-  },
-  { label: "Mercredi", title: "Dos & Biceps", badge: "badge-upper", badgeTxt: "Haut du corps", type: "upper",
-    sections: [
-      { name: "Exercices principaux", exs: [
-        { name: "Rowing haltère un bras", note: "Genou + main sur chaise, tire le coude vers le haut", sets: "3 × 10-12 rép.", weight: "1 × 6 kg (2+4)" },
-        { name: "Rowing élastique (tirage bas)", note: "Fixe l'élastique sur un pied de table bas, tire vers le ventre", sets: "3 × 12-15 rép.", weight: "Élastique" },
-        { name: "Good morning haltères", note: "Mains sur les épaules, buste en avant, dos plat – renforce érecteurs", sets: "3 × 12 rép.", weight: "2 × 4 kg" },
-        { name: "Curl biceps alternés", note: "Tourne le poignet en montant (supination)", sets: "3 × 10-12 rép.", weight: "2 × 4 kg" },
-        { name: "Curl marteau", note: "Poignet neutre, coudes fixes", sets: "2 × 12 rép.", weight: "2 × 4 kg" },
-      ]},
-      { name: "Cardio final", exs: [
-        { name: "Mountain climbers", note: "Genoux ramenés alternativement, rythme modéré", sets: "3 × 30 sec", weight: "Cardio" },
-      ]},
-    ],
-    tip: "Le dos se travaille en 'tirant' – visualise que tes mains ne font que crocheter la charge, c'est le dos qui tire."
-  },
-  { label: "Jeudi", title: "Repos actif", badge: "badge-rest", badgeTxt: "Récupération", type: "rest",
-    tip: "Marche 20-30 min, étirements doux. Évite l'inactivité totale mais ne force pas."
-  },
-  { label: "Vendredi", title: "Épaules & Abdos", badge: "badge-upper", badgeTxt: "Haut du corps", type: "upper",
-    sections: [
-      { name: "Exercices principaux", exs: [
-        { name: "Développé militaire haltères", note: "Debout, pousse les haltères au-dessus de la tête, core gainé", sets: "3 × 10-12 rép.", weight: "2 × 4 kg" },
-        { name: "Élévations latérales", note: "Légère flexion du coude, arrête à hauteur d'épaule", sets: "3 × 12-15 rép.", weight: "2 × 4 kg" },
-        { name: "Face pull élastique", note: "Fixe l'élastique à hauteur de visage, tire vers les oreilles", sets: "3 × 15 rép.", weight: "Élastique" },
-        { name: "Crunchs", note: "Pieds au sol, mains aux tempes, expire en montant", sets: "3 × 15-20 rép.", weight: "Poids du corps" },
-        { name: "Planche", note: "Position pompe ou sur les avant-bras, ventre rentré", sets: "3 × 20-30 sec", weight: "Poids du corps" },
-        { name: "Relevés de jambes (allongé)", note: "Bas du dos collé au sol, jambes montées à 90°", sets: "3 × 12 rép.", weight: "Poids du corps" },
-      ]},
-      { name: "Cardio final", exs: [
-        { name: "Jumping jacks ou corde à sauter", note: "", sets: "3 × 45 sec", weight: "Cardio" },
-      ]},
-    ],
-    tip: "Les épaules sont fragiles – ne prends pas trop lourd sur les élévations. Mieux vaut 3 kg bien fait que 8 kg en balançant."
-  },
-  { label: "Samedi", title: "Full body + Bas", badge: "badge-full", badgeTxt: "Full body", type: "full",
-    sections: [
-      { name: "Haut du corps (rappel)", exs: [
-        { name: "Pompes (variante au choix)", note: "Larges, serrées ou inclinées sur chaise", sets: "3 × max rép.", weight: "Poids du corps" },
-        { name: "Rowing haltère 2 bras", note: "Légèrement penché en avant, pouces vers le haut", sets: "3 × 12 rép.", weight: "2 × 4 kg" },
-      ]},
-      { name: "Bas du corps", exs: [
-        { name: "Squats haltères", note: "Pieds à largeur d'épaules, haltères le long du corps", sets: "3 × 15 rép.", weight: "2 × 6 kg (2+4)" },
-        { name: "Fentes avant alternées", note: "Grand pas en avant, genou arrière vers le sol", sets: "3 × 10 rép./jambe", weight: "2 × 4 kg" },
-        { name: "Hip thrust au sol", note: "Dos au sol, pieds à plat, pousse le bassin vers le haut", sets: "3 × 15 rép.", weight: "1 × 6 kg (posé sur bassin)" },
-      ]},
-      { name: "Cardio/HIIT final", exs: [
-        { name: "Circuit HIIT", note: "30s squats sautés → 30s pompes → 30s mountain climbers → 30s repos × 3", sets: "3 rounds", weight: "Cardio" },
-      ]},
-    ],
-    tip: "Ce jour est plus intense. Si tu es fatigué, réduis les séries – il vaut mieux 2 bonnes séries que 3 bâclées."
-  },
-  { label: "Dimanche", title: "Repos complet", badge: "badge-rest", badgeTxt: "Récupération", type: "rest",
-    tip: "Repos complet. La croissance musculaire se passe pendant la récupération, pas pendant l'effort."
-  },
-];
-
-let selected = 0;
-
-function renderWeek() {
-  const grid = document.getElementById('weekGrid');
-  grid.innerHTML = days.map((d, i) => `
-    <div class="day-card ${d.type === 'rest' ? 'rest' : ''} ${i === selected ? 'active' : ''}" onclick="${d.type !== 'rest' ? `selectDay(${i})` : ''}">
-      <div class="day-label">${d.label}</div>
-      <div class="day-title">${d.title}</div>
-      <span class="day-badge ${d.badge}">${d.badgeTxt}</span>
-    </div>
-  `).join('');
-}
-
-function renderDetail(i) {
-  const d = days[i];
-  const panel = document.getElementById('detailPanel');
-  if (d.type === 'rest') {
-    panel.innerHTML = `<div class="detail-header"><div class="detail-title">${d.label} — ${d.title}</div></div><p style="font-size:14px;color:#666;margin:0 0 1rem;">${d.tip}</p>`;
-    return;
-  }
-  let sectionsHTML = d.sections.map(s => `
-    <div class="section-label">${s.name}</div>
-    ${s.exs.map(e => `
-      <div class="ex-row">
-        <div><div class="ex-name">${e.name}</div><div class="ex-note">${e.note}</div></div>
-        <div><div class="ex-sets">${e.sets}</div><div class="ex-weight">${e.weight}</div></div>
+  <header class="header">
+    <div class="header-inner">
+      <div class="logo-mark">HB</div>
+      <div>
+        <h1 class="site-title">Programme Haut du Corps</h1>
+        <p class="site-sub">Débutant · 5 jours · Haltères + poids du corps</p>
       </div>
-    `).join('')}
-  `).join('');
-  panel.innerHTML = `
-    <div class="detail-header"><div class="detail-title">${d.label} — ${d.title}</div><div class="detail-sub">~35-40 min</div></div>
-    <div class="exercise-list">${sectionsHTML}</div>
-    <div class="tip-box">💡 ${d.tip}</div>
-  `;
-}
+      <div class="header-stats">
+        <div class="stat"><span class="stat-val">3×</span><span class="stat-label">séries</span></div>
+        <div class="stat"><span class="stat-val">~40</span><span class="stat-label">min</span></div>
+        <div class="stat"><span class="stat-val">8kg</span><span class="stat-label">max</span></div>
+      </div>
+    </div>
+  </header>
 
-function selectDay(i) { selected = i; renderWeek(); renderDetail(i); }
-renderWeek();
-renderDetail(0);
-</script>
+  <main class="main">
+    <nav class="week-nav" id="weekNav"></nav>
+    <section class="detail" id="detail"></section>
+  </main>
+
+  <script src="data.js"></script>
+  <script src="app.js"></script>
 </body>
 </html>
