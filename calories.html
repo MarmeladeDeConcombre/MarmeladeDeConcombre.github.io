@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Calculateur Calories — Programme Musculation</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    /* ─── Page calories ──────────────────────────────── */
+    .cal-main {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 1.5rem 2rem;
+    }
+
+    .page-intro {
+      margin-bottom: 1.75rem;
+    }
+    .page-intro h2 {
+      font-size: 22px;
+      font-weight: 600;
+      color: var(--text);
+      letter-spacing: -0.01em;
+    }
+    .page-intro p {
+      font-size: 13px;
+      color: var(--text3);
+      margin-top: 4px;
+    }
+
+    /* ─── Two-column layout ──────────────────────────── */
+    .cal-layout {
+      display: grid;
+      grid-template-columns: 300px 1fr;
+      gap: 1.25rem;
+      align-items: start;
+    }
+
+    /* ─── Form card ──────────────────────────────────── */
+    .form-card {
+      background: var(--surface);
+      border: 0.5px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.25rem;
+      position: sticky;
+      top: 1.5rem;
+    }
+
+    .form-card h3 {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      margin-bottom: 1.1rem;
+    }
+
+    .field {
+      margin-bottom: 1rem;
+    }
+
+    .field label {
+      display: block;
+      font-size: 12px;
+      color: var(--text2);
+      margin-bottom: 5px;
+    }
+
+    .field-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .field-row input[type="range"] {
+      flex: 1;
+      accent-color: var(--accent);
+    }
+
+    .field-val {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text);
+      min-width: 52px;
+      text-align: right;
+    }
+
+    /* Toggle buttons (genre) */
+    .toggle-group {
+      display: flex;
+      gap: 6px;
+    }
+
+    .toggle-btn {
+      flex: 1;
+      padding: 7px 0;
+      border-radius: var(--radius-sm);
+      border: 0.5px solid var(--border);
+      background: #f7f7f7;
+      font-size: 13px;
+      color: var(--text2);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .toggle-btn.active {
+      background: var(--accent-bg);
+      border-color: var(--accent);
+      color: var(--accent);
+      font-weight: 500;
+    }
+
+    /* Select */
+    .field select {
+      width: 100%;
+      padding: 7px 10px;
+      border-radius: var(--radius-sm);
+      border: 0.5px solid var(--border);
+      background: #f7f7f7;
+      font-size: 13px;
+      color: var(--text);
+      cursor: pointer;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 10px center;
+      padding-right: 28px;
+    }
+
+    .field-divider {
+      height: 0.5px;
+      background: var(--border);
+      margin: 1rem 0;
+    }
+
+    /* ─── Goal tabs ──────────────────────────────────── */
+    .goal-tabs {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 1.25rem;
+      flex-wrap: wrap;
+    }
+
+    .goal-tab {
+      flex: 1;
+      min-width: 90px;
+      padding: 9px 6px;
+      border-radius: var(--radius-sm);
+      border: 0.5px solid var(--border);
+      background: var(--surface);
+      font-size: 12px;
+      color: var(--text2);
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.15s;
+      line-height: 1.3;
+    }
+
+    .goal-tab .goal-icon { display: block; font-size: 18px; margin-bottom: 3px; }
+    .goal-tab .goal-name { display: block; font-weight: 500; font-size: 12px; }
+    .goal-tab .goal-sub  { display: block; font-size: 10px; color: var(--text3); margin-top: 1px; }
+
+    .goal-tab.active-cut    { background: #FEF3EE; border-color: #E07A3B; color: #7A3010; }
+    .goal-tab.active-recomp { background: var(--accent-bg); border-color: var(--accent); color: var(--accent); }
+    .goal-tab.active-bulk   { background: #EDFBF4; border-color: #2A9263; color: #0F5C38; }
+
+    /* ─── Results panel ──────────────────────────────── */
+    .results-panel { display: flex; flex-direction: column; gap: 1rem; }
+
+    /* Calorie hero card */
+    .hero-card {
+      background: var(--surface);
+      border: 0.5px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.25rem 1.5rem;
+    }
+
+    .hero-label {
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--text3);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 4px;
+    }
+
+    .hero-cal {
+      font-size: 48px;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      line-height: 1;
+    }
+
+    .hero-sub {
+      font-size: 13px;
+      color: var(--text2);
+      margin-top: 6px;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: var(--border);
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+      margin-top: 1rem;
+    }
+
+    .hero-stat {
+      background: var(--surface);
+      padding: 10px 12px;
+    }
+
+    .hero-stat-label { font-size: 10px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.06em; }
+    .hero-stat-val   { font-size: 18px; font-weight: 600; color: var(--text); margin-top: 1px; }
+    .hero-stat-unit  { font-size: 10px; color: var(--text3); }
+
+    /* Macro card */
+    .macro-card {
+      background: var(--surface);
+      border: 0.5px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.25rem 1.5rem;
+    }
+
+    .macro-card h3 {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 1rem;
+    }
+
+    .macro-bar-wrap { margin-bottom: 0.75rem; }
+
+    .macro-bar-track {
+      height: 14px;
+      border-radius: 99px;
+      background: #f0f0f0;
+      overflow: hidden;
+      display: flex;
+    }
+
+    .macro-seg { height: 100%; transition: width 0.4s ease; }
+
+    .macro-legend {
+      display: flex;
+      gap: 12px;
+      margin-top: 6px;
+      flex-wrap: wrap;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 12px;
+      color: var(--text2);
+    }
+
+    .legend-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 2px;
+      flex-shrink: 0;
+    }
+
+    /* Macro detail rows */
+    .macro-rows { display: flex; flex-direction: column; gap: 8px; margin-top: 1rem; }
+
+    .macro-row {
+      display: grid;
+      grid-template-columns: 28px 1fr auto auto;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: var(--radius-sm);
+      background: #f7f7f7;
+    }
+
+    .macro-color-bar {
+      width: 4px;
+      height: 32px;
+      border-radius: 2px;
+    }
+
+    .macro-name  { font-size: 14px; font-weight: 500; color: var(--text); }
+    .macro-note  { font-size: 11px; color: var(--text3); margin-top: 2px; }
+    .macro-grams { font-size: 20px; font-weight: 700; color: var(--text); text-align: right; }
+    .macro-gunit { font-size: 11px; color: var(--text3); }
+    .macro-kcal  { font-size: 11px; color: var(--text3); text-align: right; }
+
+    /* Sources card */
+    .sources-card {
+      background: var(--surface);
+      border: 0.5px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.25rem 1.5rem;
+    }
+
+    .sources-card h3 {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 0.9rem;
+    }
+
+    .sources-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+
+    .source-col { display: flex; flex-direction: column; gap: 5px; }
+
+    .source-header {
+      font-size: 10px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      padding: 3px 0 3px 8px;
+      border-left: 2px solid;
+      margin-bottom: 2px;
+    }
+
+    .source-item {
+      font-size: 12px;
+      color: var(--text2);
+      padding: 4px 8px;
+      background: #f7f7f7;
+      border-radius: 5px;
+    }
+
+    /* Info box */
+    .info-card {
+      border-radius: var(--radius);
+      padding: 12px 16px;
+      font-size: 13px;
+      line-height: 1.6;
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+    }
+
+    .info-icon { flex-shrink: 0; font-size: 15px; margin-top: 1px; }
+
+    /* ─── Responsive ─────────────────────────────────── */
+    @media (max-width: 720px) {
+      .cal-layout { grid-template-columns: 1fr; }
+      .form-card { position: static; }
+      .hero-cal { font-size: 36px; }
+      .sources-grid { grid-template-columns: 1fr; }
+      .cal-main { padding: 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="header">
+    <div class="header-inner">
+      <div class="logo-mark">HB</div>
+      <div>
+        <h1 class="site-title">Calculateur Calories</h1>
+        <p class="site-sub">Protéines · Glucides · Lipides — adapté à ton activité</p>
+      </div>
+      <div class="header-stats" style="margin-left:auto;">
+        <a href="index.html" style="
+          display:inline-flex; align-items:center; gap:6px;
+          padding:7px 14px; border-radius:99px;
+          border:0.5px solid var(--border); background:var(--surface);
+          font-size:13px; color:var(--text2); text-decoration:none;
+          transition:border-color 0.15s;
+        " onmouseover="this.style.borderColor='var(--border2)'" onmouseout="this.style.borderColor='var(--border)'">
+          ← Programme
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main class="cal-main">
+
+    <div class="page-intro">
+      <h2>Tes besoins caloriques et macros</h2>
+      <p>Ajuste tes paramètres — les résultats se mettent à jour en temps réel.</p>
+    </div>
+
+    <!-- Goal tabs -->
+    <div class="goal-tabs" id="goalTabs">
+      <button class="goal-tab" id="tab-cut" onclick="setGoal('cut')">
+        <span class="goal-icon">🔥</span>
+        <span class="goal-name">Perte de gras</span>
+        <span class="goal-sub">Déficit calorique</span>
+      </button>
+      <button class="goal-tab" id="tab-recomp" onclick="setGoal('recomp')">
+        <span class="goal-icon">⚖️</span>
+        <span class="goal-name">Recomposition</span>
+        <span class="goal-sub">Maintenance</span>
+      </button>
+      <button class="goal-tab" id="tab-bulk" onclick="setGoal('bulk')">
+        <span class="goal-icon">💪</span>
+        <span class="goal-name">Prise de masse</span>
+        <span class="goal-sub">Surplus calorique</span>
+      </button>
+    </div>
+
+    <div class="cal-layout">
+
+      <!-- ── Form ── -->
+      <div class="form-card">
+        <h3>Tes paramètres</h3>
+
+        <!-- Genre -->
+        <div class="field">
+          <label>Genre</label>
+          <div class="toggle-group">
+            <button class="toggle-btn active" id="btn-m" onclick="setSex('m')">Homme</button>
+            <button class="toggle-btn" id="btn-f" onclick="setSex('f')">Femme</button>
+          </div>
+        </div>
+
+        <!-- Age -->
+        <div class="field">
+          <label>Âge</label>
+          <div class="field-row">
+            <input type="range" id="age" min="16" max="60" value="21" step="1" oninput="update()">
+            <span class="field-val" id="age-out">21 ans</span>
+          </div>
+        </div>
+
+        <!-- Taille -->
+        <div class="field">
+          <label>Taille</label>
+          <div class="field-row">
+            <input type="range" id="height" min="150" max="200" value="170" step="1" oninput="update()">
+            <span class="field-val" id="height-out">170 cm</span>
+          </div>
+        </div>
+
+        <!-- Poids -->
+        <div class="field">
+          <label>Poids</label>
+          <div class="field-row">
+            <input type="range" id="weight" min="30" max="130" value="73" step="1" oninput="update()">
+            <span class="field-val" id="weight-out">73 kg</span>
+          </div>
+        </div>
+
+        <div class="field-divider"></div>
+
+        <!-- Séances / semaine -->
+        <div class="field">
+          <label>Séances par semaine</label>
+          <select id="sessions" onchange="update()">
+            <option value="0">0 séance / semaine</option>
+            <option value="1">1 séance / semaine</option>
+            <option value="2">2 séances / semaine</option>
+            <option value="3">3 séances / semaine</option>
+            <option value="4" selected>4 séances / semaine</option>
+            <option value="5">5 séances / semaine</option>
+            <option value="6">6 séances / semaine</option>
+            <option value="7">7 séances / semaine</option>
+          </select>
+        </div>
+
+        <!-- Intensité des séances -->
+        <div class="field">
+          <label>Intensité des séances</label>
+          <select id="intensity" onchange="update()">
+            <option value="light">Légère (cardio doux, courtes séances)</option>
+            <option value="moderate" selected>Modérée (poids, 35-45 min)</option>
+            <option value="hard">Intense (HIIT, séances longues)</option>
+          </select>
+        </div>
+
+        <!-- Activité hors sport -->
+        <div class="field">
+          <label>Activité hors entraînement</label>
+          <select id="lifestyle" onchange="update()">
+            <option value="sedentary" selected>Sédentaire (bureau, peu de marche)</option>
+            <option value="light">Légèrement actif (marche quotidienne)</option>
+            <option value="active">Actif (travail physique, beaucoup de marche)</option>
+          </select>
+        </div>
+
+      </div>
+
+      <!-- ── Results ── -->
+      <div class="results-panel" id="results"></div>
+
+    </div>
+  </main>
+
+  <script>
+    let sex = 'm', goal = 'recomp';
+
+    function setSex(s) {
+      sex = s;
+      document.getElementById('btn-m').className = 'toggle-btn' + (s === 'm' ? ' active' : '');
+      document.getElementById('btn-f').className = 'toggle-btn' + (s === 'f' ? ' active' : '');
+      update();
+    }
+
+    function setGoal(g) {
+      goal = g;
+      ['cut', 'recomp', 'bulk'].forEach(x => {
+        const el = document.getElementById('tab-' + x);
+        el.className = 'goal-tab' + (x === g ? ' active-' + x : '');
+      });
+      update();
+    }
+
+    function getActivityMultiplier(sessions, intensity, lifestyle) {
+      // Base lifestyle factor
+      const lifestyleBase = { sedentary: 1.2, light: 1.3, active: 1.45 };
+      let base = lifestyleBase[lifestyle];
+
+      // Add training contribution
+      const intensityAdd = { light: 0.03, moderate: 0.055, hard: 0.08 };
+      const add = intensityAdd[intensity] * sessions;
+
+      return Math.min(base + add, 1.95);
+    }
+
+    function update() {
+      const w = +document.getElementById('weight').value;
+      const h = +document.getElementById('height').value;
+      const a = +document.getElementById('age').value;
+      const sessions = +document.getElementById('sessions').value;
+      const intensity = document.getElementById('intensity').value;
+      const lifestyle = document.getElementById('lifestyle').value;
+
+      document.getElementById('weight-out').textContent  = w + ' kg';
+      document.getElementById('height-out').textContent  = h + ' cm';
+      document.getElementById('age-out').textContent     = a + ' ans';
+
+      // BMR — Mifflin-St Jeor
+      const bmr = sex === 'm'
+        ? Math.round(10 * w + 6.25 * h - 5 * a + 5)
+        : Math.round(10 * w + 6.25 * h - 5 * a - 161);
+
+      const actMult = getActivityMultiplier(sessions, intensity, lifestyle);
+      const tdee = Math.round(bmr * actMult);
+
+      // Goal adjustments
+      const goalConfig = {
+        cut:    { mult: 0.82, protMult: 2.3, fatMult: 0.85, label: 'Déficit', color: '#E07A3B', bgColor: '#FEF3EE', bdColor: '#F4B68A', desc: 'Un déficit de ~18% permet de perdre environ 0,4-0,6 kg/semaine tout en préservant le muscle grâce à un apport protéique élevé.' },
+        recomp: { mult: 1.00, protMult: 2.0, fatMult: 1.0,  label: 'Maintenance', color: '#534AB7', bgColor: 'rgba(83,74,183,0.06)', bdColor: 'rgba(83,74,183,0.25)', desc: 'À maintenance calorique avec beaucoup de protéines, tu peux perdre du gras ET gagner du muscle simultanément — l\'avantage idéal du débutant.' },
+        bulk:   { mult: 1.12, protMult: 1.8, fatMult: 1.0,  label: 'Surplus', color: '#2A9263', bgColor: '#EDFBF4', bdColor: '#7ED4B0', desc: 'Un surplus modéré de ~12% favorise la croissance musculaire en minimisant la prise de gras.' },
+      };
+
+      const cfg = goalConfig[goal];
+      const targetCal = Math.round(tdee * cfg.mult);
+      const proteinG  = Math.round(w * cfg.protMult);
+      const fatG      = Math.round(w * cfg.fatMult);
+      let   carbG     = Math.round((targetCal - proteinG * 4 - fatG * 9) / 4);
+      if (carbG < 60) carbG = 60;
+
+      const realCal = proteinG * 4 + carbG * 4 + fatG * 9;
+      const pPct = Math.round(proteinG * 4 / realCal * 100);
+      const cPct = Math.round(carbG * 4 / realCal * 100);
+      const fPct = Math.round(fatG * 9 / realCal * 100);
+
+      const deficit = tdee - targetCal;
+      const deficitStr = deficit > 0 ? `−${deficit} kcal vs TDEE` : deficit < 0 ? `+${Math.abs(deficit)} kcal vs TDEE` : 'égal au TDEE';
+
+      document.getElementById('results').innerHTML = `
+
+        <!-- Hero card -->
+        <div class="hero-card">
+          <div class="hero-label">${cfg.label} · Objectif ${['cut','recomp','bulk'].includes(goal) ? {cut:'perte de gras',recomp:'recomposition',bulk:'prise de masse'}[goal] : ''}</div>
+          <div class="hero-cal" style="color:${cfg.color};">${targetCal.toLocaleString('fr')}<span style="font-size:20px;font-weight:400;color:var(--text3);margin-left:4px;">kcal</span></div>
+          <div class="hero-sub">${deficitStr}</div>
+          <div class="hero-grid">
+            <div class="hero-stat">
+              <div class="hero-stat-label">Métabolisme de base</div>
+              <div class="hero-stat-val">${bmr.toLocaleString('fr')} <span class="hero-stat-unit">kcal</span></div>
+            </div>
+            <div class="hero-stat">
+              <div class="hero-stat-label">Dépense totale (TDEE)</div>
+              <div class="hero-stat-val">${tdee.toLocaleString('fr')} <span class="hero-stat-unit">kcal</span></div>
+            </div>
+            <div class="hero-stat">
+              <div class="hero-stat-label">Coefficient activité</div>
+              <div class="hero-stat-val">× ${actMult.toFixed(2)}</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Info desc -->
+        <div class="info-card" style="background:${cfg.bgColor}; border:1px solid ${cfg.bdColor}; color:${cfg.color};">
+          <span class="info-icon">💡</span>
+          <span>${cfg.desc}</span>
+        </div>
+
+        <!-- Macros -->
+        <div class="macro-card">
+          <h3>Répartition des macronutriments</h3>
+          <div class="macro-bar-wrap">
+            <div class="macro-bar-track">
+              <div class="macro-seg" style="width:${pPct}%; background:#534AB7;"></div>
+              <div class="macro-seg" style="width:${cPct}%; background:#1D9E75;"></div>
+              <div class="macro-seg" style="width:${fPct}%; background:#BA7517;"></div>
+            </div>
+            <div class="macro-legend">
+              <span class="legend-item"><span class="legend-dot" style="background:#534AB7;"></span>Protéines ${pPct}%</span>
+              <span class="legend-item"><span class="legend-dot" style="background:#1D9E75;"></span>Glucides ${cPct}%</span>
+              <span class="legend-item"><span class="legend-dot" style="background:#BA7517;"></span>Lipides ${fPct}%</span>
+            </div>
+          </div>
+
+          <div class="macro-rows">
+            <div class="macro-row">
+              <div class="macro-color-bar" style="background:#534AB7;"></div>
+              <div>
+                <div class="macro-name">Protéines</div>
+                <div class="macro-note">${(proteinG/w).toFixed(1)} g/kg · Muscle, récupération, satiété</div>
+              </div>
+              <div>
+                <div class="macro-grams">${proteinG} <span class="macro-gunit">g</span></div>
+                <div class="macro-kcal">${proteinG * 4} kcal</div>
+              </div>
+            </div>
+            <div class="macro-row">
+              <div class="macro-color-bar" style="background:#1D9E75;"></div>
+              <div>
+                <div class="macro-name">Glucides</div>
+                <div class="macro-note">${(carbG/w).toFixed(1)} g/kg · Énergie, performance, glycogène</div>
+              </div>
+              <div>
+                <div class="macro-grams">${carbG} <span class="macro-gunit">g</span></div>
+                <div class="macro-kcal">${carbG * 4} kcal</div>
+              </div>
+            </div>
+            <div class="macro-row">
+              <div class="macro-color-bar" style="background:#BA7517;"></div>
+              <div>
+                <div class="macro-name">Lipides</div>
+                <div class="macro-note">${(fatG/w).toFixed(1)} g/kg · Hormones, vitamines, santé articulaire</div>
+              </div>
+              <div>
+                <div class="macro-grams">${fatG} <span class="macro-gunit">g</span></div>
+                <div class="macro-kcal">${Math.round(fatG * 9)} kcal</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sources alimentaires -->
+        <div class="sources-card">
+          <h3>Sources alimentaires recommandées</h3>
+          <div class="sources-grid">
+            <div class="source-col">
+              <div class="source-header" style="color:#3C3489; border-color:#534AB7;">Protéines</div>
+              <span class="source-item">🍗 Poulet / dinde</span>
+              <span class="source-item">🥚 Œufs entiers</span>
+              <span class="source-item">🐟 Thon / saumon</span>
+              <span class="source-item">🥛 Fromage blanc 0%</span>
+              <span class="source-item">🫘 Lentilles / pois chiches</span>
+              <span class="source-item">🧀 Skyr / yaourt grec</span>
+            </div>
+            <div class="source-col">
+              <div class="source-header" style="color:#0F5C38; border-color:#1D9E75;">Glucides</div>
+              <span class="source-item">🍚 Riz complet</span>
+              <span class="source-item">🍝 Pâtes complètes</span>
+              <span class="source-item">🌾 Avoine / flocons</span>
+              <span class="source-item">🍠 Patate douce</span>
+              <span class="source-item">🍞 Pain complet</span>
+              <span class="source-item">🍌 Fruits</span>
+            </div>
+            <div class="source-col">
+              <div class="source-header" style="color:#7A5010; border-color:#BA7517;">Lipides</div>
+              <span class="source-item">🫒 Huile d'olive</span>
+              <span class="source-item">🥑 Avocat</span>
+              <span class="source-item">🥜 Noix / amandes</span>
+              <span class="source-item">🐟 Poisson gras</span>
+              <span class="source-item">🥚 Jaune d'œuf</span>
+              <span class="source-item">🧈 Beurre (modéré)</span>
+            </div>
+          </div>
+        </div>
+
+      `;
+    }
+
+    // Init
+    setGoal('recomp');
+  </script>
+
+</body>
+</html>
