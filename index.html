@@ -1,65 +1,903 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Programme Musculation — Haut du Corps</title>
-  <link rel="stylesheet" href="style.css" />
-  <style>
-    @media (max-width: 660px) {
-      .header-stats .stat { display: none; }
-      .header-stats {
-        display: flex !important;
-        gap: 6px;
-        margin-left: auto;
-        flex-wrap: nowrap;
-      }
-    }
-  </style>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+<title>Programme Musculation — HB</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f5f5f5;--surface:#fff;--border:#e0e0e0;--border2:#aaa;
+  --text:#1a1a1a;--text2:#555;--text3:#888;
+  --accent:#534AB7;--accent-bg:rgba(83,74,183,.07);--accent-bd:rgba(83,74,183,.25);
+  --coral:#712B13;--coral-bg:#FAECE7;
+  --green:#1D9E75;--green-bg:#EDFBF4;--green-bd:#7ED4B0;
+  --orange:#E07A3B;--orange-bg:#FEF3EE;
+  --r:12px;--rs:8px;
+  --nav-h:64px;
+}
+html,body{height:100%;overflow:hidden}
+body{font-family:system-ui,sans-serif;background:var(--bg);color:var(--text);display:flex;flex-direction:column}
+
+/* ── Header ── */
+.hdr{background:var(--surface);border-bottom:.5px solid var(--border);padding:.9rem 1.25rem;flex-shrink:0;display:flex;align-items:center;gap:12px}
+.logo{width:36px;height:36px;border-radius:8px;background:#EEEDFE;color:var(--accent);font-size:11px;font-weight:600;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.hdr-title{font-size:16px;font-weight:600;color:var(--text);line-height:1.2}
+.hdr-sub{font-size:11px;color:var(--text3);margin-top:1px}
+
+/* ── Scroll area ── */
+.scroll{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;padding-bottom:calc(var(--nav-h) + 8px)}
+
+/* ── Bottom nav ── */
+.bnav{position:fixed;bottom:0;left:0;right:0;height:var(--nav-h);background:var(--surface);border-top:.5px solid var(--border);display:flex;z-index:100;padding-bottom:env(safe-area-inset-bottom)}
+.bnav-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;border:none;background:none;cursor:pointer;padding:8px 0;color:var(--text3);font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:.06em;transition:color .15s}
+.bnav-btn.active{color:var(--accent)}
+.bnav-icon{font-size:20px;line-height:1}
+.bnav-btn.active .bnav-icon{transform:scale(1.08)}
+
+/* ── Pages ── */
+.page{display:none;padding:1rem}
+.page.active{display:block}
+
+/* ── Programme: jours ── */
+.days-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:1rem}
+.day-card{background:var(--surface);border:.5px solid var(--border);border-radius:var(--r);padding:11px 12px;cursor:pointer;transition:border-color .15s,background .15s;text-align:left;width:100%}
+.day-card:active{background:var(--accent-bg)}
+.day-card.is-active{border:2px solid var(--accent);background:var(--accent-bg)}
+.day-card.is-rest{cursor:default;background:#f9f9f9;opacity:.7}
+.dc-label{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em}
+.dc-name{font-size:13px;font-weight:500;color:var(--text);margin-top:2px}
+.dc-tag{display:inline-block;font-size:9px;padding:2px 7px;border-radius:99px;margin-top:4px}
+.tag-push{background:#EEEDFE;color:#3C3489}
+.tag-pull{background:#E6F4EA;color:#1A5C35}
+.tag-legs{background:#FEF3EE;color:#7A3010}
+.tag-rest{background:#f0f0f0;color:var(--text3);border:.5px solid var(--border)}
+
+/* ── Detail séance ── */
+.detail-card{background:var(--surface);border:.5px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:.75rem}
+.detail-head{padding:1rem;border-bottom:.5px solid var(--border)}
+.detail-back{display:inline-flex;align-items:center;gap:5px;font-size:12px;color:var(--text3);background:none;border:none;cursor:pointer;margin-bottom:8px;padding:0}
+.detail-back:active{color:var(--accent)}
+.dh-label{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:2px}
+.dh-title{font-size:18px;font-weight:600;color:var(--text);letter-spacing:-.01em}
+.dh-meta{display:flex;align-items:center;gap:6px;margin-top:6px}
+.dur-badge{font-size:11px;color:var(--accent);background:var(--accent-bg);border:.5px solid var(--accent-bd);border-radius:99px;padding:2px 9px}
+
+.sec-block{padding:0 1rem}
+.sec-block:first-of-type{padding-top:.85rem}
+.sec-block:last-of-type{padding-bottom:.85rem}
+.sec-label{font-size:10px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:.1em;margin:1rem 0 5px;display:flex;align-items:center;gap:8px}
+.sec-label::after{content:'';flex:1;height:1px;background:var(--border)}
+
+.ex-row{padding:9px 10px;border-radius:var(--rs);background:#f7f7f7;margin-bottom:4px}
+.ex-name{font-size:13px;font-weight:500;color:var(--text)}
+.ex-note{font-size:11px;color:var(--text2);margin-top:2px;line-height:1.4}
+.ex-bottom{display:flex;align-items:center;gap:8px;margin-top:5px}
+.ex-sets{font-size:12px;font-weight:500;color:var(--accent)}
+.ex-weight{font-size:11px;color:var(--text3)}
+
+.tip-box{margin:0 1rem .85rem;padding:10px 12px;background:var(--accent-bg);border:1px solid var(--accent-bd);border-radius:var(--rs);font-size:12px;color:var(--accent);line-height:1.5;display:flex;gap:8px}
+
+.rest-panel{padding:2rem 1rem;text-align:center}
+.rest-icon{font-size:36px;opacity:.35;margin-bottom:.75rem}
+.rest-title{font-size:17px;font-weight:600;color:var(--text)}
+.rest-desc{font-size:13px;color:var(--text2);margin-top:.5rem;line-height:1.6;max-width:300px;margin-left:auto;margin-right:auto}
+
+/* ── Calories ── */
+.form-card{background:var(--surface);border:.5px solid var(--border);border-radius:var(--r);padding:1rem}
+.form-card + .form-card{margin-top:.75rem}
+.card-title{font-size:11px;font-weight:600;color:var(--text);text-transform:uppercase;letter-spacing:.07em;margin-bottom:1rem}
+
+.goal-tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-bottom:.85rem}
+.goal-tab{padding:9px 4px;border-radius:var(--rs);border:.5px solid var(--border);background:var(--surface);font-size:11px;color:var(--text2);cursor:pointer;text-align:center;line-height:1.3}
+.goal-tab .gi{display:block;font-size:18px;margin-bottom:2px}
+.goal-tab .gn{display:block;font-weight:500;font-size:11px}
+.goal-tab.active-cut{background:#FEF3EE;border-color:#E07A3B;color:#7A3010}
+.goal-tab.active-recomp{background:var(--accent-bg);border-color:var(--accent);color:var(--accent)}
+.goal-tab.active-bulk{background:#EDFBF4;border-color:#2A9263;color:#0F5C38}
+
+.field{margin-bottom:.85rem}
+.field label{display:block;font-size:11px;color:var(--text2);margin-bottom:4px}
+.field-row{display:flex;align-items:center;gap:8px}
+.field-row input[type=range]{flex:1;accent-color:var(--accent)}
+.field-val{font-size:13px;font-weight:500;color:var(--text);min-width:48px;text-align:right}
+.toggle-grp{display:flex;gap:5px}
+.toggle-btn{flex:1;padding:7px 0;border-radius:var(--rs);border:.5px solid var(--border);background:#f7f7f7;font-size:13px;color:var(--text2);cursor:pointer;transition:all .15s}
+.toggle-btn.active{background:var(--accent-bg);border-color:var(--accent);color:var(--accent);font-weight:500}
+.field select{width:100%;padding:7px 10px;border-radius:var(--rs);border:.5px solid var(--border);background:#f7f7f7;font-size:13px;color:var(--text);appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:28px}
+
+.hero-card{background:var(--surface);border:.5px solid var(--border);border-radius:var(--r);padding:1rem;margin-bottom:.75rem}
+.hero-label{font-size:10px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:3px}
+.hero-cal{font-size:40px;font-weight:700;letter-spacing:-.03em;line-height:1}
+.hero-sub{font-size:12px;color:var(--text2);margin-top:5px}
+.hero-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border);border-radius:var(--rs);overflow:hidden;margin-top:.85rem}
+.hero-stat{background:var(--surface);padding:9px 10px}
+.hsl{font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.06em}
+.hsv{font-size:15px;font-weight:600;color:var(--text);margin-top:1px}
+.hsu{font-size:9px;color:var(--text3)}
+
+.info-card{border-radius:var(--r);padding:11px 13px;font-size:12px;line-height:1.6;display:flex;gap:8px;margin-bottom:.75rem}
+
+.macro-card{background:var(--surface);border:.5px solid var(--border);border-radius:var(--r);padding:1rem;margin-bottom:.75rem}
+.macro-bar-track{height:12px;border-radius:99px;background:#f0f0f0;overflow:hidden;display:flex}
+.macro-seg{height:100%;transition:width .4s ease}
+.macro-legend{display:flex;gap:10px;margin-top:5px;flex-wrap:wrap}
+.legend-item{display:flex;align-items:center;gap:4px;font-size:11px;color:var(--text2)}
+.legend-dot{width:7px;height:7px;border-radius:2px;flex-shrink:0}
+.macro-rows{display:flex;flex-direction:column;gap:6px;margin-top:.85rem}
+.macro-row{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:var(--rs);background:#f7f7f7}
+.mcb{width:3px;height:30px;border-radius:2px;flex-shrink:0}
+.mci{flex:1}
+.mc-name{font-size:13px;font-weight:500;color:var(--text)}
+.mc-note{font-size:10px;color:var(--text3);margin-top:1px}
+.mc-right{text-align:right}
+.mc-g{font-size:17px;font-weight:700;color:var(--text)}
+.mc-u{font-size:10px;color:var(--text3)}
+.mc-k{font-size:10px;color:var(--text3)}
+
+.sources-card{background:var(--surface);border:.5px solid var(--border);border-radius:var(--r);padding:1rem;margin-bottom:.75rem}
+.src-grid{display:flex;flex-direction:column;gap:8px}
+.src-header{font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:.07em;padding:3px 0 3px 8px;border-left:2px solid;margin-bottom:2px}
+.src-items{display:flex;flex-wrap:wrap;gap:4px}
+.src-item{font-size:12px;color:var(--text2);padding:4px 8px;background:#f7f7f7;border-radius:5px}
+
+/* ── Repas ── */
+.tabs{display:flex;gap:3px;border-bottom:1.5px solid var(--border);margin-bottom:1rem;overflow-x:auto;flex-wrap:nowrap;-webkit-overflow-scrolling:touch}
+.tab-btn{padding:8px 14px;font-size:12px;font-weight:500;color:var(--text3);background:none;border:none;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1.5px;white-space:nowrap;transition:color .15s,border-color .15s}
+.tab-btn.active{color:var(--accent);border-bottom-color:var(--accent)}
+
+.totals-bar{background:var(--surface);border:.5px solid var(--border);border-radius:var(--r);padding:.85rem 1rem;margin-bottom:.75rem}
+.total-hero-val{font-size:32px;font-weight:700;letter-spacing:-.03em;color:var(--accent);line-height:1}
+.total-hero-unit{font-size:13px;font-weight:400;color:var(--text3);margin-left:2px}
+.total-hero-label{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:2px}
+.macro-bar-mini{height:5px;border-radius:99px;background:#f0f0f0;overflow:hidden;display:flex;margin-top:6px}
+.totals-macros{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:.75rem}
+.total-stat{background:#f7f7f7;border-radius:var(--rs);padding:8px 10px}
+.total-stat-label{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.06em}
+.total-stat-val{font-size:15px;font-weight:600;margin-top:1px}
+.total-stat-unit{font-size:10px;color:var(--text3);font-weight:400}
+.prot-color{color:#534AB7}.carb-color{color:#1D9E75}.fat-color{color:#BA7517}
+
+.card{background:var(--surface);border:.5px solid var(--border);border-radius:var(--r);padding:1rem;margin-bottom:.75rem}
+
+.ing-list{display:flex;flex-direction:column;gap:5px}
+.ing-row{display:flex;align-items:center;gap:8px;padding:9px 10px;border-radius:var(--rs);background:#f7f7f7}
+.ing-info{flex:1;min-width:0}
+.ing-name{font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ing-qty{font-size:11px;color:var(--text3);margin-top:1px}
+.ing-kcal{font-size:13px;font-weight:600;color:var(--accent);flex-shrink:0}
+.ing-kcal-unit{font-size:10px;font-weight:400;color:var(--text3)}
+.btn-remove{width:28px;height:28px;border-radius:6px;background:none;border:.5px solid var(--border);color:var(--text3);font-size:15px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0}
+.btn-remove:active{background:#ffe5e5;color:#c0392b}
+
+.btn-add-ing{display:flex;align-items:center;gap:8px;width:100%;padding:10px 12px;border-radius:var(--rs);border:.5px solid var(--border);background:var(--surface);font-size:13px;color:var(--text2);cursor:pointer;margin-top:8px}
+.plus-icon{width:22px;height:22px;border-radius:6px;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-size:16px;line-height:1;flex-shrink:0}
+
+.add-area{border:1.5px dashed var(--border);border-radius:var(--r);padding:1rem;margin-top:10px}
+.add-area-title{font-size:11px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:.85rem}
+
+.autocomplete-wrap{position:relative;margin-bottom:10px}
+.autocomplete-drop{position:absolute;top:100%;left:0;right:0;z-index:50;background:var(--surface);border:.5px solid var(--border);border-radius:var(--rs);box-shadow:0 4px 16px rgba(0,0,0,.1);max-height:180px;overflow-y:auto;display:none}
+.autocomplete-drop.open{display:block}
+.drop-item{padding:10px 12px;font-size:13px;cursor:pointer;border-bottom:.5px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+.drop-item:last-child{border-bottom:none}
+.drop-item:active{background:var(--accent-bg)}
+.drop-item-kcal{font-size:11px;color:var(--text3)}
+.drop-new{padding:10px 12px;font-size:13px;cursor:pointer;color:var(--accent);font-weight:500;display:flex;align-items:center;gap:6px}
+
+.field-group{margin-bottom:8px}
+.field-group label{display:block;font-size:11px;color:var(--text3);margin-bottom:3px}
+.field-group input,.field-group select{width:100%;padding:8px 10px;border-radius:var(--rs);border:.5px solid var(--border);background:#f7f7f7;font-size:13px;color:var(--text);outline:none}
+.field-group input:focus,.field-group select:focus{border-color:var(--accent);background:#fff}
+.field-group select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:28px;background-color:#f7f7f7}
+
+.form-2col{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.form-2col .span2{grid-column:1/-1}
+
+.btn-primary{padding:10px 16px;border-radius:var(--rs);background:var(--accent);color:#fff;border:none;font-size:13px;font-weight:500;cursor:pointer;width:100%;margin-top:4px}
+.btn-secondary{padding:9px 14px;border-radius:var(--rs);background:#f0f0f0;color:var(--text2);border:.5px solid var(--border);font-size:13px;cursor:pointer}
+
+.sec-sep{font-size:10px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:.1em;display:flex;align-items:center;gap:8px;margin:1rem 0 .6rem}
+.sec-sep::after{content:'';flex:1;height:1px;background:var(--border)}
+
+.tip-box-sm{padding:9px 11px;background:var(--accent-bg);border:1px solid var(--accent-bd);border-radius:var(--rs);font-size:12px;color:var(--accent);line-height:1.5;display:flex;gap:7px;margin-top:.75rem}
+
+.save-recipe-row{display:flex;flex-direction:column;gap:6px;margin-top:.75rem}
+
+.recipe-item{background:#f7f7f7;border-radius:var(--rs);padding:11px 12px;margin-bottom:6px}
+.recipe-name{font-size:14px;font-weight:500}
+.recipe-meta{font-size:11px;color:var(--text3);margin-top:2px;margin-bottom:8px}
+.recipe-footer{display:flex;gap:6px}
+.btn-use{padding:7px 14px;border-radius:6px;background:var(--accent-bg);border:.5px solid var(--accent-bd);color:var(--accent);font-size:12px;font-weight:500;cursor:pointer}
+
+.db-item{background:#f7f7f7;border-radius:var(--rs);padding:9px 12px;margin-bottom:5px;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.db-item-name{font-size:13px;font-weight:500}
+.db-item-info{font-size:11px;color:var(--text3);margin-top:1px}
+
+.empty-state{text-align:center;padding:2rem;color:var(--text3);font-size:13px}
+.empty-icon{font-size:28px;opacity:.3;margin-bottom:8px}
+
+/* Modal */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:200;align-items:flex-end;justify-content:center;padding-bottom:env(safe-area-inset-bottom)}
+.modal-overlay.open{display:flex}
+.modal{background:var(--surface);border-radius:var(--r) var(--r) 0 0;padding:1.25rem;width:100%;max-height:85vh;overflow-y:auto}
+.modal-title{font-size:16px;font-weight:600;margin-bottom:1rem}
+.modal-footer{display:flex;flex-direction:column;gap:6px;margin-top:1rem}
+.modal-footer button{width:100%}
+.modal-ing-row{display:flex;justify-content:space-between;align-items:center;padding:7px 10px;border-radius:6px;background:#f7f7f7;font-size:13px;margin-bottom:4px}
+
+@media(min-width:600px){
+  .page{max-width:700px;margin:0 auto}
+  .days-grid{grid-template-columns:repeat(4,1fr)}
+  .src-grid{display:grid;grid-template-columns:repeat(3,1fr)}
+  .hero-grid{grid-template-columns:repeat(3,1fr)}
+  .totals-macros{grid-template-columns:repeat(3,1fr)}
+  .bnav-btn{font-size:11px}
+  .modal{border-radius:var(--r);max-width:480px;margin:auto;border-bottom-left-radius:var(--r);border-bottom-right-radius:var(--r)}
+  .modal-overlay{align-items:center}
+  .modal-footer{flex-direction:row;justify-content:flex-end}
+  .modal-footer button{width:auto}
+  .save-recipe-row{flex-direction:row}
+}
+</style>
 </head>
 <body>
 
-  <header class="header">
-    <div class="header-inner">
-      <div class="logo-mark">HB</div>
-      <div>
-        <h1 class="site-title">Programme Haut du Corps</h1>
-        <p class="site-sub">Débutant · 5 jours · Haltères + poids du corps</p>
+<header class="hdr">
+  <div class="logo">HB</div>
+  <div>
+    <div class="hdr-title" id="pageTitle">Programme</div>
+    <div class="hdr-sub" id="pageSub">Débutant · 6 jours · Haltères</div>
+  </div>
+</header>
+
+<div class="scroll">
+  <!-- ══ PAGE: PROGRAMME ══ -->
+  <div class="page active" id="page-prog">
+    <div id="prog-list"></div>
+    <div id="prog-detail" style="display:none"></div>
+  </div>
+
+  <!-- ══ PAGE: CALORIES ══ -->
+  <div class="page" id="page-cal">
+
+    <div class="goal-tabs" id="goalTabs">
+      <button class="goal-tab" id="tab-cut" onclick="setGoal('cut')">
+        <span class="gi">🔥</span><span class="gn">Perte de gras</span>
+      </button>
+      <button class="goal-tab" id="tab-recomp" onclick="setGoal('recomp')">
+        <span class="gi">⚖️</span><span class="gn">Recompo</span>
+      </button>
+      <button class="goal-tab" id="tab-bulk" onclick="setGoal('bulk')">
+        <span class="gi">💪</span><span class="gn">Prise de masse</span>
+      </button>
+    </div>
+
+    <div class="form-card">
+      <div class="card-title">Mes paramètres</div>
+      <div class="field">
+        <label>Genre</label>
+        <div class="toggle-grp">
+          <button class="toggle-btn active" id="btn-m" onclick="setSex('m')">Homme</button>
+          <button class="toggle-btn" id="btn-f" onclick="setSex('f')">Femme</button>
+        </div>
       </div>
-      <div class="header-stats">
-        <div class="stat"><span class="stat-val">3×</span><span class="stat-label">séries</span></div>
-        <div class="stat"><span class="stat-val">~40</span><span class="stat-label">min</span></div>
-        <div class="stat"><span class="stat-val">8kg</span><span class="stat-label">max</span></div>
-        <a href="calories.html" style="
-          display:inline-flex; align-items:center; gap:6px;
-          padding:7px 12px; border-radius:99px;
-          background:#EEEDFE; border:1px solid rgba(83,74,183,0.3);
-          font-size:13px; font-weight:500; color:#3C3489; text-decoration:none;
-          transition:background 0.15s; white-space:nowrap;
-          margin-left:8px;
-        " onmouseover="this.style.background='#E0DEFF'" onmouseout="this.style.background='#EEEDFE'">
-          🔥 Calories
-        </a>
-        <a href="repas.html" style="
-          display:inline-flex; align-items:center; gap:6px;
-          padding:7px 12px; border-radius:99px;
-          background:#EEEDFE; border:1px solid rgba(83,74,183,0.3);
-          font-size:13px; font-weight:500; color:#3C3489; text-decoration:none;
-          transition:background 0.15s; white-space:nowrap;
-          margin-left:8px;
-        " onmouseover="this.style.background='#E0DEFF'" onmouseout="this.style.background='#EEEDFE'">
-          Repas
-        </a>
+      <div class="field">
+        <label>Âge</label>
+        <div class="field-row">
+          <input type="range" id="age" min="16" max="60" value="21" step="1" oninput="updateCal()">
+          <span class="field-val" id="age-out">21 ans</span>
+        </div>
+      </div>
+      <div class="field">
+        <label>Taille</label>
+        <div class="field-row">
+          <input type="range" id="height" min="150" max="200" value="170" step="1" oninput="updateCal()">
+          <span class="field-val" id="height-out">170 cm</span>
+        </div>
+      </div>
+      <div class="field">
+        <label>Poids</label>
+        <div class="field-row">
+          <input type="range" id="weight" min="30" max="130" value="73" step="1" oninput="updateCal()">
+          <span class="field-val" id="weight-out">73 kg</span>
+        </div>
+      </div>
+      <div class="field">
+        <label>Séances / semaine</label>
+        <select id="sessions" onchange="updateCal()">
+          <option value="0">0 séance</option><option value="1">1 séance</option>
+          <option value="2">2 séances</option><option value="3">3 séances</option>
+          <option value="4" selected>4 séances</option><option value="5">5 séances</option>
+          <option value="6">6 séances</option><option value="7">7 séances</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Intensité</label>
+        <select id="intensity" onchange="updateCal()">
+          <option value="light">Légère</option>
+          <option value="moderate" selected>Modérée</option>
+          <option value="hard">Intense</option>
+        </select>
+      </div>
+      <div class="field" style="margin-bottom:0">
+        <label>Activité hors sport</label>
+        <select id="lifestyle" onchange="updateCal()">
+          <option value="sedentary" selected>Sédentaire</option>
+          <option value="light">Légèrement actif</option>
+          <option value="active">Actif</option>
+        </select>
       </div>
     </div>
-  </header>
 
-  <main class="main">
-    <nav class="week-nav" id="weekNav"></nav>
-    <section class="detail" id="detail"></section>
-  </main>
+    <div id="cal-results"></div>
+  </div>
 
-  <script src="data.js"></script>
-  <script src="app.js"></script>
+  <!-- ══ PAGE: REPAS ══ -->
+  <div class="page" id="page-repas">
+    <div class="tabs">
+      <button class="tab-btn active" onclick="showMealTab('repas')">🍽 Repas</button>
+      <button class="tab-btn" onclick="showMealTab('recettes')">📋 Recettes</button>
+      <button class="tab-btn" onclick="showMealTab('ingredients')">🗄 Ingrédients</button>
+    </div>
+
+    <div id="mtab-repas">
+      <div class="totals-bar">
+        <div class="total-hero-label">Total repas</div>
+        <div class="total-hero-val" id="totalKcal">0<span class="total-hero-unit">kcal</span></div>
+        <div class="macro-bar-mini">
+          <div class="macro-seg" id="barProt" style="width:0%;background:#534AB7"></div>
+          <div class="macro-seg" id="barCarb" style="width:0%;background:#1D9E75"></div>
+          <div class="macro-seg" id="barFat"  style="width:0%;background:#BA7517"></div>
+        </div>
+        <div class="totals-macros">
+          <div class="total-stat"><div class="total-stat-label">Protéines</div><div class="total-stat-val prot-color" id="totalProt">0 <span class="total-stat-unit">g</span></div></div>
+          <div class="total-stat"><div class="total-stat-label">Glucides</div><div class="total-stat-val carb-color" id="totalCarb">0 <span class="total-stat-unit">g</span></div></div>
+          <div class="total-stat"><div class="total-stat-label">Lipides</div><div class="total-stat-val fat-color" id="totalFat">0 <span class="total-stat-unit">g</span></div></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Ingrédients du repas</div>
+        <div class="ing-list" id="mealIngList"></div>
+        <button class="btn-add-ing" id="btnShowAdd" onclick="toggleAddArea()">
+          <span class="plus-icon">+</span>Ajouter un ingrédient
+        </button>
+        <div class="add-area" id="addArea" style="display:none;margin-top:10px">
+          <div class="add-area-title">Ajouter un ingrédient</div>
+          <div class="autocomplete-wrap">
+            <div class="field-group">
+              <label>Rechercher ou créer</label>
+              <input type="text" id="ingSearch" placeholder="Ex : poulet, riz…" autocomplete="off" oninput="onSearch()" onfocus="onSearch()"/>
+            </div>
+            <div class="autocomplete-drop" id="autoDrop"></div>
+          </div>
+          <div id="formExisting" style="display:none">
+            <div class="sec-sep">Ingrédient sélectionné</div>
+            <div style="padding:8px 10px;background:#f7f7f7;border-radius:8px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center">
+              <span id="selectedIngName" style="font-size:14px;font-weight:500"></span>
+              <span id="selectedIngInfo" style="font-size:12px;color:var(--text3)"></span>
+            </div>
+            <div class="form-2col">
+              <div class="field-group"><label>Quantité</label><input type="number" id="qtyExisting" min="1" value="100"/></div>
+              <div class="field-group"><label>Unité</label><select id="unitExisting"><option value="g">g</option></select></div>
+              <button class="btn-primary span2" onclick="addExistingToMeal()">Ajouter au repas</button>
+            </div>
+          </div>
+          <div id="formNew" style="display:none">
+            <div class="sec-sep">Nouvel ingrédient</div>
+            <div class="field-group"><label>Nom</label><input type="text" id="newIngName" placeholder="Ex : Poulet grillé"/></div>
+            <div class="form-2col">
+              <div class="field-group"><label>Quantité</label><input type="number" id="newIngQty" min="1" value="100"/></div>
+              <div class="field-group"><label>Unité</label><select id="newIngUnit"><option value="g">g</option><option value="cL">cL</option></select></div>
+              <div class="field-group"><label>kcal / 100g</label><input type="number" id="newIngKcal" min="0" placeholder="165"/></div>
+              <div class="field-group"><label>Protéines / 100g</label><input type="number" id="newIngProt" min="0" placeholder="31"/></div>
+              <div class="field-group"><label>Glucides / 100g</label><input type="number" id="newIngCarb" min="0" placeholder="0"/></div>
+              <div class="field-group"><label>Lipides / 100g</label><input type="number" id="newIngFat" min="0" placeholder="3.6"/></div>
+              <button class="btn-primary span2" onclick="addNewIngredient()">Créer & Ajouter</button>
+            </div>
+          </div>
+        </div>
+        <div id="saveRecipeArea" style="display:none">
+          <div class="sec-sep" style="margin-top:1rem">Sauvegarder comme recette</div>
+          <div class="save-recipe-row">
+            <input type="text" id="recipeSaveName" placeholder="Nom de la recette…" style="padding:9px 10px;border-radius:var(--rs);border:.5px solid var(--border);background:#f7f7f7;font-size:13px;flex:1"/>
+            <div style="display:flex;gap:6px">
+              <button class="btn-primary" style="width:auto;padding:9px 14px" onclick="saveCurrentAsRecipe()">💾 Sauvegarder</button>
+              <button class="btn-secondary" onclick="clearMeal()">🗑 Vider</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="mtab-recettes" style="display:none">
+      <div class="card">
+        <div class="card-title">Mes recettes</div>
+        <div id="recipeList"></div>
+      </div>
+    </div>
+
+    <div id="mtab-ingredients" style="display:none">
+      <div class="card">
+        <div class="card-title">Base d'ingrédients</div>
+        <div id="ingDbList"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Bottom nav -->
+<nav class="bnav">
+  <button class="bnav-btn active" id="nav-prog" onclick="showPage('prog')">
+    <span class="bnav-icon">🏋️</span>Programme
+  </button>
+  <button class="bnav-btn" id="nav-cal" onclick="showPage('cal')">
+    <span class="bnav-icon">🔥</span>Calories
+  </button>
+  <button class="bnav-btn" id="nav-repas" onclick="showPage('repas')">
+    <span class="bnav-icon">🍽️</span>Repas
+  </button>
+</nav>
+
+<!-- Modal recette -->
+<div class="modal-overlay" id="modalRecipe">
+  <div class="modal">
+    <div class="modal-title" id="modalRecipeTitle">Charger une recette</div>
+    <div class="field-group"><label>Ingrédient de référence</label><select id="modalRefIng"></select></div>
+    <div class="form-2col" style="margin-top:8px">
+      <div class="field-group"><label>Quantité réelle</label><input type="number" id="modalRefQty" min="1" value="150"/></div>
+      <div class="field-group"><label>Unité</label><select id="modalRefUnit"><option value="g">g</option><option value="cL">cL</option></select></div>
+    </div>
+    <div id="modalIngPreview" style="margin-top:10px"></div>
+    <div class="modal-footer">
+      <button class="btn-secondary" onclick="closeModal()">Annuler</button>
+      <button class="btn-primary" style="width:auto;padding:9px 20px" onclick="loadRecipeToMeal()">Charger</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════════
+   DONNÉES DU PROGRAMME
+═══════════════════════════════════════════════ */
+const DAYS=[{label:"Lundi",title:"Push A — Pecs & Épaules",tagClass:"tag-push",tagTxt:"Push",type:"upper",duration:"~40-45 min",sections:[{name:"Échauffement",exs:[{name:"Rotation d'épaules + cercles de bras",note:"30 sec chaque sens",sets:"2 × 30 sec",weight:"Sans charge"}]},{name:"Exercices principaux",exs:[{name:"Développé couché haltères",note:"Allongé au sol, coudes à 45°, descend lentement",sets:"4 × 10-12 rép.",weight:"2 × 4 kg"},{name:"Pompes (mains larges)",note:"Sur les genoux si besoin – focus sur les pecs",sets:"3 × max rép.",weight:"Poids du corps"},{name:"Écartés haltères",note:"Légère flexion des coudes, contrôle la descente",sets:"3 × 12-15 rép.",weight:"2 × 4 kg"},{name:"Développé militaire haltères",note:"Debout, pousse au-dessus de la tête, core gainé",sets:"3 × 10-12 rép.",weight:"2 × 4 kg"},{name:"Élévations latérales",note:"Légère flexion du coude, arrête à hauteur d'épaule",sets:"3 × 12-15 rép.",weight:"2 × 4 kg"},{name:"Extensions triceps haltère",note:"Bras derrière la tête, coudes près des oreilles",sets:"3 × 12 rép.",weight:"1 × 4 kg"}]},{name:"Cardio final",exs:[{name:"Jumping jacks",note:"Rythme soutenu",sets:"3 × 40 sec / 20 sec repos",weight:"Cardio"}]}],tip:"Repos 60-75 sec entre séries. Les pecs et épaules partagent cette séance — commence toujours par les exercices les plus lourds quand tu es frais."},{label:"Mardi",title:"Pull A — Dos & Biceps",tagClass:"tag-pull",tagTxt:"Pull",type:"upper",duration:"~40-45 min",sections:[{name:"Échauffement",exs:[{name:"Chat-vache (mobilité lombaire)",note:"À quatre pattes, dos rond puis dos creux",sets:"2 × 10 rép.",weight:"Sans charge"}]},{name:"Exercices principaux",exs:[{name:"Rowing haltère un bras",note:"Genou + main sur chaise, tire le coude vers le haut",sets:"4 × 10-12 rép.",weight:"1 × 6 kg"},{name:"Rowing haltères 2 bras",note:"Penché à 45°, tire les deux haltères vers le ventre, dos plat",sets:"3 × 12-15 rép.",weight:"2 × 4 kg"},{name:"Superman / extensions lombaires",note:"Ventre au sol, soulève bras et jambes simultanément, tiens 2 sec",sets:"3 × 12 rép.",weight:"Poids du corps"},{name:"Oiseau haltères",note:"Penché à 45°, bras écartés latéralement",sets:"3 × 15 rép.",weight:"2 × 2 kg"},{name:"Curl biceps alternés",note:"Tourne le poignet en montant, coudes fixes",sets:"3 × 10-12 rép.",weight:"2 × 4 kg"},{name:"Curl marteau",note:"Poignet neutre, coudes contre le corps",sets:"3 × 12 rép.",weight:"2 × 4 kg"}]},{name:"Cardio final",exs:[{name:"Mountain climbers",note:"Genoux ramenés alternativement, rythme modéré",sets:"3 × 40 sec / 20 sec repos",weight:"Cardio"}]}],tip:"Le dos se travaille en 'tirant' – visualise que tes mains ne font que crocheter la charge, c'est le dos qui tire, pas les bras."},{label:"Mercredi",title:"Legs A — Quadriceps",tagClass:"tag-legs",tagTxt:"Jambes",type:"lower",duration:"~40-45 min",sections:[{name:"Échauffement",exs:[{name:"Rotations de hanches + talons-fesses",note:"Mobilise les genoux et les hanches",sets:"2 × 30 sec chaque",weight:"Sans charge"}]},{name:"Exercices principaux",exs:[{name:"Squats haltères",note:"Pieds à largeur d'épaules, descent sous le parallèle si possible",sets:"4 × 12-15 rép.",weight:"2 × 6 kg"},{name:"Fentes avant alternées",note:"Grand pas en avant, genou arrière proche du sol",sets:"3 × 10 rép./jambe",weight:"2 × 4 kg"},{name:"Squat bulgare (pied arrière sur chaise)",note:"Pied arrière posé sur une chaise, descent sur la jambe avant",sets:"3 × 10 rép./jambe",weight:"2 × 4 kg"},{name:"Extensions jambe (assis sur chaise)",note:"Assis, tend une jambe à l'horizontale, tiens 2 sec, alterne",sets:"3 × 15 rép./jambe",weight:"Poids du corps"},{name:"Mollets debout",note:"Montée sur la pointe des pieds",sets:"4 × 20 rép.",weight:"2 × 6 kg ou poids du corps"}]},{name:"Abdos",exs:[{name:"Crunchs",note:"Pieds au sol, mains aux tempes, expire en montant",sets:"3 × 20 rép.",weight:"Poids du corps"},{name:"Planche",note:"Sur les avant-bras, ventre rentré, respire normalement",sets:"3 × 30-40 sec",weight:"Poids du corps"}]},{name:"Cardio final",exs:[{name:"Squats sautés",note:"Explose vers le haut, réception douce",sets:"3 × 30 sec / 30 sec repos",weight:"Cardio"}]}],tip:"Les jambes sont le plus grand groupe musculaire. Repos 90 sec entre les séries de squats, 60 sec pour le reste."},{label:"Jeudi",title:"Push B — Pecs & Triceps",tagClass:"tag-push",tagTxt:"Push",type:"upper",duration:"~40-45 min",sections:[{name:"Échauffement",exs:[{name:"Pompes lentes (échauffement)",note:"5 reps très lentes, 3 sec en descente",sets:"2 × 5 rép.",weight:"Poids du corps"}]},{name:"Exercices principaux",exs:[{name:"Pompes inclinées (pieds sur chaise)",note:"Travaille la partie haute des pecs",sets:"4 × 8-12 rép.",weight:"Poids du corps"},{name:"Développé couché haltères (prise serrée)",note:"Coudes à 30° du corps, accent sur les triceps",sets:"3 × 12 rép.",weight:"2 × 4 kg"},{name:"Pompes serrées",note:"Mains sous les épaules, coudes collés au corps",sets:"3 × max rép.",weight:"Poids du corps"},{name:"Élévations frontales haltères",note:"Bras tendu, monte à hauteur des yeux",sets:"3 × 12 rép.",weight:"1 × 4 kg"},{name:"Extensions triceps haltère (un bras)",note:"Bras derrière la tête, coude fixe",sets:"3 × 12 rép./bras",weight:"1 × 4 kg"},{name:"Dips entre deux chaises",note:"Mains sur deux chaises derrière toi, descent en pliant les coudes",sets:"3 × 10-15 rép.",weight:"Poids du corps"}]},{name:"Cardio final",exs:[{name:"Burpees",note:"Pompe au sol + saut en fin de mouvement",sets:"3 × 30 sec / 30 sec repos",weight:"Cardio"}]}],tip:"Push B met plus l'accent sur les triceps. Les dips entre chaises sont l'un des meilleurs exercices triceps sans matériel."},{label:"Vendredi",title:"Pull B — Dos & Abdos",tagClass:"tag-pull",tagTxt:"Pull",type:"upper",duration:"~40-45 min",sections:[{name:"Échauffement",exs:[{name:"Rotations de tronc debout",note:"Mains sur les hanches, rotation lente",sets:"2 × 10 rép. chaque côté",weight:"Sans charge"}]},{name:"Exercices principaux",exs:[{name:"Rowing élastique assis",note:"Élastique autour d'un pied de table, assis au sol, tire vers le ventre",sets:"4 × 15 rép.",weight:"Élastique"},{name:"Rowing haltère un bras (tempo lent)",note:"2 sec en montée, 3 sec en descente",sets:"3 × 10 rép./bras",weight:"1 × 6 kg"},{name:"Good morning haltères",note:"Mains sur les épaules, buste en avant dos plat",sets:"3 × 15 rép.",weight:"2 × 4 kg"},{name:"Curl biceps concentré (assis)",note:"Coude appuyé sur la cuisse, montée lente",sets:"3 × 12 rép./bras",weight:"1 × 6 kg"}]},{name:"Abdos (circuit)",exs:[{name:"Crunchs obliques",note:"Genoux d'un côté, coude opposé vers les genoux",sets:"3 × 15 rép./côté",weight:"Poids du corps"},{name:"Relevés de jambes allongé",note:"Bas du dos collé au sol, jambes montées à 90°",sets:"3 × 15 rép.",weight:"Poids du corps"},{name:"Planche latérale",note:"Sur l'avant-bras, corps aligné, hanches hautes",sets:"3 × 20 sec/côté",weight:"Poids du corps"}]},{name:"Cardio final",exs:[{name:"Circuit HIIT",note:"30s mountain climbers → 30s jumping jacks → 30s repos × 3",sets:"3 rounds",weight:"Cardio"}]}],tip:"Pull B est moins lourd mais plus complet sur les abdos. Profite de la fin de semaine pour travailler ton gainage."},{label:"Samedi",title:"Legs B — Fessiers & Ischio",tagClass:"tag-legs",tagTxt:"Jambes",type:"lower",duration:"~40-45 min",sections:[{name:"Échauffement",exs:[{name:"Hip circles + fentes statiques",note:"Grands cercles de hanches, puis fentes sans poids",sets:"2 × 30 sec chaque",weight:"Sans charge"}]},{name:"Exercices principaux",exs:[{name:"Hip thrust au sol",note:"Dos au sol, pieds à plat, haltère sur le bassin, pousse fort vers le haut",sets:"4 × 15 rép.",weight:"1 × 8 kg"},{name:"Soulevé de terre roumain haltères",note:"Jambes quasi tendues, haltères le long des cuisses, dos plat",sets:"4 × 12 rép.",weight:"2 × 6 kg"},{name:"Fentes latérales",note:"Grand pas sur le côté, genou fléchi, jambe opposée tendue",sets:"3 × 10 rép./jambe",weight:"2 × 4 kg"},{name:"Pont fessier une jambe",note:"Allongé, une jambe levée tendue, pousse avec le pied au sol",sets:"3 × 12 rép./jambe",weight:"Poids du corps"},{name:"Good morning (ischio)",note:"Mains sur les épaules, buste en avant lentement",sets:"3 × 12 rép.",weight:"Sans charge ou 2 × 2 kg"}]},{name:"Cardio final",exs:[{name:"Circuit HIIT final",note:"30s squats sautés → 30s fentes alternées → 30s repos × 3",sets:"3 rounds",weight:"Cardio"}]}],tip:"Legs B cible les ischio-jambiers et fessiers. Le soulevé de terre roumain est roi ici : garde le dos plat et sens bien l'étirement dans les ischios."},{label:"Dimanche",title:"Repos complet",tagClass:"tag-rest",tagTxt:"Récupération",type:"rest",tip:"Repos complet mérité. 6 séances c'est un volume élevé — ce jour est aussi important que les autres. Hydrate-toi bien et mange suffisamment de protéines pour récupérer."}];
+
+/* ═══════════════════════════════════════════════
+   NAVIGATION PAGES
+═══════════════════════════════════════════════ */
+const PAGES=['prog','cal','repas'];
+const PAGE_TITLES={prog:['Programme','6 jours · Haltères + poids du corps'],cal:['Calories & Macros','Protéines · Glucides · Lipides'],repas:['Suivi Repas','Ingrédients · Calories · Recettes']};
+
+function showPage(name){
+  PAGES.forEach(p=>{
+    document.getElementById('page-'+p).classList.toggle('active',p===name);
+    document.getElementById('nav-'+p).classList.toggle('active',p===name);
+  });
+  const [title,sub]=PAGE_TITLES[name];
+  document.getElementById('pageTitle').textContent=title;
+  document.getElementById('pageSub').textContent=sub;
+  document.querySelector('.scroll').scrollTop=0;
+  if(name==='cal') updateCal();
+  if(name==='repas') renderMeal();
+}
+
+/* ═══════════════════════════════════════════════
+   PROGRAMME
+═══════════════════════════════════════════════ */
+let selectedDay=null;
+
+function renderProgList(){
+  const el=document.getElementById('prog-list');
+  el.innerHTML=`<div class="days-grid">${DAYS.map((d,i)=>`
+    <button class="day-card ${d.type==='rest'?'is-rest':''}" onclick="${d.type!=='rest'?`showDayDetail(${i})`:''}">
+      <div class="dc-label">${d.label}</div>
+      <div class="dc-name">${d.title.split('—')[0].trim()}</div>
+      <div class="dc-tag ${d.tagClass}">${d.tagTxt}</div>
+    </button>`).join('')}</div>`;
+}
+
+function showDayDetail(i){
+  selectedDay=i;
+  const day=DAYS[i];
+  const detail=document.getElementById('prog-detail');
+  const list=document.getElementById('prog-list');
+  list.style.display='none';
+  detail.style.display='block';
+
+  if(day.type==='rest'){
+    detail.innerHTML=`
+      <button class="detail-back" onclick="backToList()">← Retour</button>
+      <div class="detail-card">
+        <div class="rest-panel">
+          <div class="rest-icon">${day.title.includes('complet')?'🛌':'🚶'}</div>
+          <div class="rest-title">${day.label} — ${day.title}</div>
+          <div class="rest-desc">${day.tip}</div>
+        </div>
+      </div>`;
+    return;
+  }
+
+  const secs=day.sections.map(s=>`
+    <div class="sec-block">
+      <div class="sec-label">${s.name}</div>
+      ${s.exs.map(e=>`
+        <div class="ex-row">
+          <div class="ex-name">${e.name}</div>
+          ${e.note?`<div class="ex-note">${e.note}</div>`:''}
+          <div class="ex-bottom">
+            <span class="ex-sets">${e.sets}</span>
+            <span class="ex-weight">${e.weight}</span>
+          </div>
+        </div>`).join('')}
+    </div>`).join('');
+
+  detail.innerHTML=`
+    <button class="detail-back" onclick="backToList()">← Tous les jours</button>
+    <div class="detail-card">
+      <div class="detail-head">
+        <div class="dh-label">${day.label}</div>
+        <div class="dh-title">${day.title}</div>
+        <div class="dh-meta">
+          <span class="dc-tag ${day.tagClass}">${day.tagTxt}</span>
+          <span class="dur-badge">${day.duration}</span>
+        </div>
+      </div>
+      ${secs}
+      <div class="tip-box"><span>💡</span><span>${day.tip}</span></div>
+    </div>`;
+  document.querySelector('.scroll').scrollTop=0;
+}
+
+function backToList(){
+  document.getElementById('prog-list').style.display='block';
+  document.getElementById('prog-detail').style.display='none';
+  document.querySelector('.scroll').scrollTop=0;
+}
+
+/* ═══════════════════════════════════════════════
+   CALORIES
+═══════════════════════════════════════════════ */
+let sex='m',goal='recomp';
+
+function setSex(s){
+  sex=s;
+  document.getElementById('btn-m').className='toggle-btn'+(s==='m'?' active':'');
+  document.getElementById('btn-f').className='toggle-btn'+(s==='f'?' active':'');
+  updateCal();
+}
+
+function setGoal(g){
+  goal=g;
+  ['cut','recomp','bulk'].forEach(x=>{
+    document.getElementById('tab-'+x).className='goal-tab'+(x===g?' active-'+x:'');
+  });
+  updateCal();
+}
+
+function getActMult(sessions,intensity,lifestyle){
+  const lb={sedentary:1.2,light:1.3,active:1.45};
+  const ia={light:.03,moderate:.055,hard:.08};
+  return Math.min(lb[lifestyle]+ia[intensity]*sessions,1.95);
+}
+
+function updateCal(){
+  const w=+document.getElementById('weight').value;
+  const h=+document.getElementById('height').value;
+  const a=+document.getElementById('age').value;
+  const sessions=+document.getElementById('sessions').value;
+  const intensity=document.getElementById('intensity').value;
+  const lifestyle=document.getElementById('lifestyle').value;
+
+  document.getElementById('weight-out').textContent=w+' kg';
+  document.getElementById('height-out').textContent=h+' cm';
+  document.getElementById('age-out').textContent=a+' ans';
+
+  const bmr=sex==='m'?Math.round(10*w+6.25*h-5*a+5):Math.round(10*w+6.25*h-5*a-161);
+  const actMult=getActMult(sessions,intensity,lifestyle);
+  const tdee=Math.round(bmr*actMult);
+
+  const cfg={
+    cut:{mult:.82,protMult:2.3,fatMult:.85,label:'Déficit',color:'#E07A3B',bgColor:'#FEF3EE',bdColor:'#F4B68A',desc:'Un déficit de ~18% permet de perdre environ 0,4-0,6 kg/semaine tout en préservant le muscle.'},
+    recomp:{mult:1,protMult:2,fatMult:1,label:'Maintenance',color:'#534AB7',bgColor:'rgba(83,74,183,.06)',bdColor:'rgba(83,74,183,.25)',desc:'À maintenance calorique avec beaucoup de protéines, tu peux perdre du gras ET gagner du muscle simultanément.'},
+    bulk:{mult:1.12,protMult:1.8,fatMult:1,label:'Surplus',color:'#2A9263',bgColor:'#EDFBF4',bdColor:'#7ED4B0',desc:'Un surplus modéré de ~12% favorise la croissance musculaire en minimisant la prise de gras.'},
+  }[goal];
+
+  const targetCal=Math.round(tdee*cfg.mult);
+  const proteinG=Math.round(w*cfg.protMult);
+  const fatG=Math.round(w*cfg.fatMult);
+  let carbG=Math.round((targetCal-proteinG*4-fatG*9)/4);
+  if(carbG<60)carbG=60;
+
+  const realCal=proteinG*4+carbG*4+fatG*9;
+  const pPct=Math.round(proteinG*4/realCal*100);
+  const cPct=Math.round(carbG*4/realCal*100);
+  const fPct=Math.round(fatG*9/realCal*100);
+  const deficit=tdee-targetCal;
+  const defStr=deficit>0?`−${deficit} kcal vs TDEE`:deficit<0?`+${Math.abs(deficit)} kcal vs TDEE`:'égal au TDEE';
+
+  document.getElementById('cal-results').innerHTML=`
+    <div class="hero-card">
+      <div class="hero-label">${cfg.label}</div>
+      <div class="hero-cal" style="color:${cfg.color}">${targetCal.toLocaleString('fr')}<span style="font-size:18px;font-weight:400;color:var(--text3);margin-left:3px">kcal</span></div>
+      <div class="hero-sub">${defStr}</div>
+      <div class="hero-grid">
+        <div class="hero-stat"><div class="hsl">Métabolisme base</div><div class="hsv">${bmr.toLocaleString('fr')} <span class="hsu">kcal</span></div></div>
+        <div class="hero-stat"><div class="hsl">TDEE total</div><div class="hsv">${tdee.toLocaleString('fr')} <span class="hsu">kcal</span></div></div>
+        <div class="hero-stat"><div class="hsl">Coeff. activité</div><div class="hsv">× ${actMult.toFixed(2)}</div></div>
+      </div>
+    </div>
+    <div class="info-card" style="background:${cfg.bgColor};border:1px solid ${cfg.bdColor};color:${cfg.color}">
+      <span>💡</span><span>${cfg.desc}</span>
+    </div>
+    <div class="macro-card">
+      <div class="card-title">Macronutriments</div>
+      <div class="macro-bar-track">
+        <div class="macro-seg" style="width:${pPct}%;background:#534AB7"></div>
+        <div class="macro-seg" style="width:${cPct}%;background:#1D9E75"></div>
+        <div class="macro-seg" style="width:${fPct}%;background:#BA7517"></div>
+      </div>
+      <div class="macro-legend">
+        <span class="legend-item"><span class="legend-dot" style="background:#534AB7"></span>Protéines ${pPct}%</span>
+        <span class="legend-item"><span class="legend-dot" style="background:#1D9E75"></span>Glucides ${cPct}%</span>
+        <span class="legend-item"><span class="legend-dot" style="background:#BA7517"></span>Lipides ${fPct}%</span>
+      </div>
+      <div class="macro-rows">
+        <div class="macro-row"><div class="mcb" style="background:#534AB7"></div><div class="mci"><div class="mc-name">Protéines</div><div class="mc-note">${(proteinG/w).toFixed(1)} g/kg · Muscle & récupération</div></div><div class="mc-right"><div class="mc-g">${proteinG} <span class="mc-u">g</span></div><div class="mc-k">${proteinG*4} kcal</div></div></div>
+        <div class="macro-row"><div class="mcb" style="background:#1D9E75"></div><div class="mci"><div class="mc-name">Glucides</div><div class="mc-note">${(carbG/w).toFixed(1)} g/kg · Énergie & performance</div></div><div class="mc-right"><div class="mc-g">${carbG} <span class="mc-u">g</span></div><div class="mc-k">${carbG*4} kcal</div></div></div>
+        <div class="macro-row"><div class="mcb" style="background:#BA7517"></div><div class="mci"><div class="mc-name">Lipides</div><div class="mc-note">${(fatG/w).toFixed(1)} g/kg · Hormones & santé</div></div><div class="mc-right"><div class="mc-g">${fatG} <span class="mc-u">g</span></div><div class="mc-k">${Math.round(fatG*9)} kcal</div></div></div>
+      </div>
+    </div>
+    <div class="sources-card">
+      <div class="card-title">Sources recommandées</div>
+      <div class="src-grid">
+        <div><div class="src-header" style="color:#3C3489;border-color:#534AB7">Protéines</div><div class="src-items"><span class="src-item">🍗 Poulet</span><span class="src-item">🥚 Œufs</span><span class="src-item">🐟 Thon</span><span class="src-item">🥛 Fromage blanc 0%</span><span class="src-item">🫘 Lentilles</span><span class="src-item">🧀 Skyr</span></div></div>
+        <div><div class="src-header" style="color:#0F5C38;border-color:#1D9E75">Glucides</div><div class="src-items"><span class="src-item">🍚 Riz complet</span><span class="src-item">🍝 Pâtes complètes</span><span class="src-item">🌾 Flocons d'avoine</span><span class="src-item">🍠 Patate douce</span><span class="src-item">🍌 Fruits</span></div></div>
+        <div><div class="src-header" style="color:#7A5010;border-color:#BA7517">Lipides</div><div class="src-items"><span class="src-item">🫒 Huile d'olive</span><span class="src-item">🥑 Avocat</span><span class="src-item">🥜 Noix</span><span class="src-item">🐟 Poisson gras</span><span class="src-item">🥚 Jaune d'œuf</span></div></div>
+      </div>
+    </div>`;
+}
+
+/* ═══════════════════════════════════════════════
+   REPAS
+═══════════════════════════════════════════════ */
+const KEYS={ings:'hb_ings',recipes:'hb_recipes',meal:'hb_meal'};
+function lsLoad(k){try{return JSON.parse(localStorage.getItem(k))||[];}catch{return[];}}
+function lsSave(k,v){localStorage.setItem(k,JSON.stringify(v));}
+
+let ingredients=lsLoad(KEYS.ings);
+let recipes=lsLoad(KEYS.recipes);
+let meal=lsLoad(KEYS.meal);
+let selectedIng=null,currentRecipe=null;
+
+if(ingredients.length===0){
+  ingredients=[
+    {id:uid(),name:'Poulet (blanc)',kcalPer100:165,unit:'g',prot:31,carb:0,fat:3.6},
+    {id:uid(),name:'Riz cuit',kcalPer100:130,unit:'g',prot:2.7,carb:28,fat:0.3},
+    {id:uid(),name:'Œuf entier',kcalPer100:155,unit:'g',prot:13,carb:1.1,fat:11},
+    {id:uid(),name:'Lait demi-écrémé',kcalPer100:46,unit:'cL',prot:3.2,carb:4.8,fat:1.6},
+    {id:uid(),name:"Flocons d'avoine",kcalPer100:370,unit:'g',prot:13,carb:60,fat:7},
+  ];
+  lsSave(KEYS.ings,ingredients);
+}
+
+function uid(){return Math.random().toString(36).slice(2,9);}
+
+function showMealTab(name){
+  ['repas','recettes','ingredients'].forEach(t=>{
+    document.getElementById('mtab-'+t).style.display=t===name?'':'none';
+  });
+  document.querySelectorAll('.tab-btn').forEach((b,i)=>{
+    b.classList.toggle('active',['repas','recettes','ingredients'][i]===name);
+  });
+  if(name==='recettes')renderRecipes();
+  if(name==='ingredients')renderIngDb();
+}
+
+function onSearch(){
+  const q=document.getElementById('ingSearch').value.trim().toLowerCase();
+  const drop=document.getElementById('autoDrop');
+  const filtered=q?ingredients.filter(i=>i.name.toLowerCase().includes(q)):ingredients;
+  let html=filtered.map(i=>`<div class="drop-item" onclick="selectIng('${i.id}')"><span>${i.name}</span><span class="drop-item-kcal">${i.kcalPer100} kcal/100${i.unit==='cL'?'cL':'g'}</span></div>`).join('');
+  if(q){
+    const exact=ingredients.find(i=>i.name.toLowerCase()===q);
+    if(!exact)html+=`<div class="drop-new" onclick="prepareNew()">+ Créer "${document.getElementById('ingSearch').value}"</div>`;
+  }
+  drop.innerHTML=html||`<div class="drop-new" onclick="prepareNew()">+ Créer un nouvel ingrédient</div>`;
+  drop.classList.add('open');
+}
+
+document.addEventListener('click',e=>{
+  if(!e.target.closest('.autocomplete-wrap'))document.getElementById('autoDrop').classList.remove('open');
+});
+
+function selectIng(id){
+  selectedIng=ingredients.find(i=>i.id===id);
+  if(!selectedIng)return;
+  document.getElementById('autoDrop').classList.remove('open');
+  document.getElementById('ingSearch').value=selectedIng.name;
+  document.getElementById('selectedIngName').textContent=selectedIng.name;
+  document.getElementById('selectedIngInfo').textContent=`${selectedIng.kcalPer100} kcal/100${selectedIng.unit==='cL'?'cL':'g'}`;
+  const unitSel=document.getElementById('unitExisting');
+  unitSel.innerHTML=selectedIng.unit==='cL'?'<option value="cL">cL</option><option value="mL">mL</option>':'<option value="g">g</option>';
+  document.getElementById('formExisting').style.display='';
+  document.getElementById('formNew').style.display='none';
+}
+
+function prepareNew(){
+  const q=document.getElementById('ingSearch').value.trim();
+  document.getElementById('newIngName').value=q;
+  document.getElementById('autoDrop').classList.remove('open');
+  document.getElementById('formNew').style.display='';
+  document.getElementById('formExisting').style.display='none';
+  selectedIng=null;
+}
+
+function addExistingToMeal(){
+  if(!selectedIng)return;
+  const qty=parseFloat(document.getElementById('qtyExisting').value)||100;
+  const unit=document.getElementById('unitExisting').value;
+  meal.push({ingId:selectedIng.id,qty,unit});
+  lsSave(KEYS.meal,meal);
+  resetAddArea();
+  renderMeal();
+}
+
+function addNewIngredient(){
+  const name=document.getElementById('newIngName').value.trim();
+  const qty=parseFloat(document.getElementById('newIngQty').value)||100;
+  const unit=document.getElementById('newIngUnit').value;
+  const kcal=parseFloat(document.getElementById('newIngKcal').value)||0;
+  const prot=parseFloat(document.getElementById('newIngProt').value)||0;
+  const carb=parseFloat(document.getElementById('newIngCarb').value)||0;
+  const fat=parseFloat(document.getElementById('newIngFat').value)||0;
+  if(!name)return alert("Entre un nom.");
+  const ing={id:uid(),name,kcalPer100:kcal,unit:unit==='g'?'g':'cL',prot,carb,fat};
+  ingredients.push(ing);
+  lsSave(KEYS.ings,ingredients);
+  meal.push({ingId:ing.id,qty,unit});
+  lsSave(KEYS.meal,meal);
+  resetAddArea();
+  renderMeal();
+}
+
+function resetAddArea(){
+  document.getElementById('ingSearch').value='';
+  document.getElementById('formExisting').style.display='none';
+  document.getElementById('formNew').style.display='none';
+  selectedIng=null;
+}
+
+function toggleAddArea(){
+  const area=document.getElementById('addArea');
+  const open=area.style.display!=='none';
+  area.style.display=open?'none':'';
+  document.getElementById('btnShowAdd').querySelector('.plus-icon').textContent=open?'+':'−';
+}
+
+function removeFromMeal(idx){meal.splice(idx,1);lsSave(KEYS.meal,meal);renderMeal();}
+function clearMeal(){if(!confirm('Vider le repas ?'))return;meal=[];lsSave(KEYS.meal,meal);renderMeal();}
+
+function calcKcal(item){
+  const ing=ingredients.find(i=>i.id===item.ingId);
+  if(!ing)return{kcal:0,prot:0,carb:0,fat:0};
+  let g=item.qty;
+  if(item.unit==='cL')g=item.qty*10;
+  if(item.unit==='mL')g=item.qty;
+  const r=g/100;
+  return{kcal:Math.round(ing.kcalPer100*r),prot:Math.round(ing.prot*r*10)/10,carb:Math.round(ing.carb*r*10)/10,fat:Math.round(ing.fat*r*10)/10};
+}
+
+function renderMeal(){
+  const list=document.getElementById('mealIngList');
+  const saveArea=document.getElementById('saveRecipeArea');
+  let tKcal=0,tProt=0,tCarb=0,tFat=0;
+
+  if(meal.length===0){
+    list.innerHTML=`<div class="empty-state"><div class="empty-icon">🥗</div>Aucun ingrédient — clique sur + ci-dessous</div>`;
+    saveArea.style.display='none';
+  }else{
+    saveArea.style.display='';
+    list.innerHTML=meal.map((item,idx)=>{
+      const ing=ingredients.find(i=>i.id===item.ingId);
+      if(!ing)return'';
+      const v=calcKcal(item);
+      tKcal+=v.kcal;tProt+=v.prot;tCarb+=v.carb;tFat+=v.fat;
+      return`<div class="ing-row"><div class="ing-info"><div class="ing-name">${ing.name}</div><div class="ing-qty">${item.qty} ${item.unit} · P:${v.prot}g G:${v.carb}g L:${v.fat}g</div></div><div class="ing-kcal">${v.kcal} <span class="ing-kcal-unit">kcal</span></div><button class="btn-remove" onclick="removeFromMeal(${idx})">×</button></div>`;
+    }).join('');
+  }
+
+  document.getElementById('totalKcal').innerHTML=`${tKcal}<span class="total-hero-unit">kcal</span>`;
+  document.getElementById('totalProt').innerHTML=`${tProt.toFixed(1)} <span class="total-stat-unit">g</span>`;
+  document.getElementById('totalCarb').innerHTML=`${tCarb.toFixed(1)} <span class="total-stat-unit">g</span>`;
+  document.getElementById('totalFat').innerHTML=`${tFat.toFixed(1)} <span class="total-stat-unit">g</span>`;
+  const tm=tProt*4+tCarb*4+tFat*9||1;
+  document.getElementById('barProt').style.width=(tProt*4/tm*100)+'%';
+  document.getElementById('barCarb').style.width=(tCarb*4/tm*100)+'%';
+  document.getElementById('barFat').style.width=(tFat*9/tm*100)+'%';
+}
+
+function saveCurrentAsRecipe(){
+  const name=document.getElementById('recipeSaveName').value.trim();
+  if(!name)return alert('Donne un nom à ta recette.');
+  if(meal.length===0)return alert('Le repas est vide.');
+  recipes.push({id:uid(),name,items:JSON.parse(JSON.stringify(meal))});
+  lsSave(KEYS.recipes,recipes);
+  document.getElementById('recipeSaveName').value='';
+  alert(`Recette "${name}" sauvegardée !`);
+}
+
+function renderRecipes(){
+  const list=document.getElementById('recipeList');
+  if(recipes.length===0){list.innerHTML=`<div class="empty-state"><div class="empty-icon">📋</div>Aucune recette — compose un repas et sauvegarde-le !</div>`;return;}
+  list.innerHTML=recipes.map(r=>{
+    const tKcal=r.items.reduce((s,item)=>s+calcKcal(item).kcal,0);
+    const names=r.items.map(item=>{const ing=ingredients.find(i=>i.id===item.ingId);return ing?ing.name:'?';}).join(', ');
+    return`<div class="recipe-item"><div class="recipe-name">${r.name} <span style="color:var(--accent);font-size:13px">${tKcal} kcal</span></div><div class="recipe-meta">${names}</div><div class="recipe-footer"><button class="btn-use" onclick="openRecipeModal('${r.id}')">Charger</button><button class="btn-remove" onclick="deleteRecipe('${r.id}')">×</button></div></div>`;
+  }).join('');
+}
+
+function deleteRecipe(id){if(!confirm('Supprimer ?'))return;recipes=recipes.filter(r=>r.id!==id);lsSave(KEYS.recipes,recipes);renderRecipes();}
+
+function openRecipeModal(id){
+  currentRecipe=recipes.find(r=>r.id===id);
+  if(!currentRecipe)return;
+  document.getElementById('modalRecipeTitle').textContent=`Charger : ${currentRecipe.name}`;
+  const refSel=document.getElementById('modalRefIng');
+  refSel.innerHTML=currentRecipe.items.map(item=>{const ing=ingredients.find(i=>i.id===item.ingId);return ing?`<option value="${item.ingId}">${ing.name} (ref: ${item.qty} ${item.unit})</option>`:''}).join('');
+  updateModalPreview();
+  refSel.onchange=updateModalPreview;
+  document.getElementById('modalRefQty').oninput=updateModalPreview;
+  document.getElementById('modalRecipe').classList.add('open');
+}
+
+function updateModalPreview(){
+  const refIngId=document.getElementById('modalRefIng').value;
+  const refQty=parseFloat(document.getElementById('modalRefQty').value)||1;
+  const refItem=currentRecipe.items.find(i=>i.ingId===refIngId);
+  if(!refItem)return;
+  const ratio=refQty/refItem.qty;
+  document.getElementById('modalIngPreview').innerHTML=currentRecipe.items.map(item=>{
+    const ing=ingredients.find(i=>i.id===item.ingId);
+    if(!ing)return'';
+    const adjQty=Math.round(item.qty*ratio*10)/10;
+    const k=calcKcal({ingId:item.ingId,qty:adjQty,unit:item.unit});
+    return`<div class="modal-ing-row"><span>${ing.name}</span><span style="color:var(--text3);font-size:12px">${adjQty} ${item.unit}</span><span style="color:var(--accent);font-weight:600">${k.kcal} kcal</span></div>`;
+  }).join('');
+}
+
+function loadRecipeToMeal(){
+  const refIngId=document.getElementById('modalRefIng').value;
+  const refQty=parseFloat(document.getElementById('modalRefQty').value)||1;
+  const refItem=currentRecipe.items.find(i=>i.ingId===refIngId);
+  if(!refItem)return;
+  const ratio=refQty/refItem.qty;
+  currentRecipe.items.forEach(item=>{
+    meal.push({ingId:item.ingId,qty:Math.round(item.qty*ratio*10)/10,unit:item.unit});
+  });
+  lsSave(KEYS.meal,meal);
+  closeModal();
+  showMealTab('repas');
+  renderMeal();
+}
+
+function closeModal(){document.getElementById('modalRecipe').classList.remove('open');currentRecipe=null;}
+document.getElementById('modalRecipe').addEventListener('click',e=>{if(e.target===document.getElementById('modalRecipe'))closeModal();});
+
+function renderIngDb(){
+  const el=document.getElementById('ingDbList');
+  if(ingredients.length===0){el.innerHTML=`<div class="empty-state"><div class="empty-icon">🗄</div>Aucun ingrédient.</div>`;return;}
+  el.innerHTML=ingredients.map(ing=>`<div class="db-item"><div><div class="db-item-name">${ing.name}</div><div class="db-item-info">${ing.kcalPer100} kcal/100${ing.unit==='cL'?'cL':'g'} · P:${ing.prot}g G:${ing.carb}g L:${ing.fat}g</div></div><button class="btn-remove" onclick="deleteIng('${ing.id}')">×</button></div>`).join('');
+}
+
+function deleteIng(id){if(!confirm('Supprimer ?'))return;ingredients=ingredients.filter(i=>i.id!==id);lsSave(KEYS.ings,ingredients);renderIngDb();}
+
+/* ═══════════════════════════════════════════════
+   INIT
+═══════════════════════════════════════════════ */
+renderProgList();
+setGoal('recomp');
+renderMeal();
+</script>
 </body>
 </html>
