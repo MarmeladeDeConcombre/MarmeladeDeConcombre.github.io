@@ -425,12 +425,50 @@
     .save-recipe-row input:focus { outline: none; border-color: var(--accent); background: #fff; }
 
     @media (max-width: 660px) {
-      .page-main { padding: 1rem; }
-      .header { padding: 1rem; }
-      .totals-bar { grid-template-columns: 1fr 1fr; }
+      .page-main { padding: 0.75rem; }
+      .header { padding: 0.85rem 1rem; }
+
+      .totals-bar {
+        grid-template-columns: 1fr 1fr;
+        gap: 0.85rem;
+        padding: 0.85rem 1rem;
+      }
+      .total-hero-val { font-size: 28px; }
+      .totals-bar > div:first-child { grid-column: 1 / -1; }
       .total-divider { display: none; }
-      .form-row, .form-row-new { grid-template-columns: 1fr 1fr; }
+      .total-stat { text-align: left; }
+      .total-stat-val { font-size: 15px; }
+
+      .form-row,
+      .form-row-new {
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+      }
+      .form-row > *:last-child,
+      .form-row-new > *:last-child {
+        grid-column: 1 / -1;
+      }
+
       .ing-db-grid { grid-template-columns: 1fr; }
+
+      .recipe-item { flex-wrap: wrap; }
+      .recipe-actions { width: 100%; justify-content: flex-end; }
+
+      .modal { padding: 1rem; }
+      .modal-footer { flex-direction: column-reverse; }
+      .modal-footer button { width: 100%; }
+
+      .card { padding: 1rem; }
+      .ing-row { grid-template-columns: 1fr auto auto; }
+
+      .tabs { gap: 2px; overflow-x: auto; flex-wrap: nowrap; }
+      .tab-btn { padding: 8px 12px; white-space: nowrap; font-size: 12px; }
+
+      .save-recipe-row { flex-wrap: wrap; }
+      .save-recipe-row input { width: 100%; }
+      .save-recipe-row button { flex: 1; }
+
+      .page-intro h2 { font-size: 18px; }
     }
   </style>
 </head>

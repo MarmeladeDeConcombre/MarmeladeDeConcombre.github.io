@@ -348,9 +348,25 @@
     @media (max-width: 720px) {
       .cal-layout { grid-template-columns: 1fr; }
       .form-card { position: static; }
-      .hero-cal { font-size: 36px; }
+      .hero-cal { font-size: 32px; }
       .sources-grid { grid-template-columns: 1fr; }
-      .cal-main { padding: 1rem; }
+      .cal-main { padding: 0.75rem; }
+      .hero-grid { grid-template-columns: 1fr 1fr; }
+      .hero-grid .hero-stat:last-child { grid-column: 1 / -1; }
+      .macro-row { grid-template-columns: 16px 1fr auto; }
+      .macro-row > div:last-child { grid-column: 3; }
+      .goal-tabs { gap: 4px; }
+      .goal-tab { min-width: 80px; padding: 7px 4px; }
+      .goal-tab .goal-sub { display: none; }
+      .macro-legend { gap: 8px; }
+      .page-intro h2 { font-size: 18px; }
+    }
+
+    @media (max-width: 420px) {
+      .hero-grid { grid-template-columns: 1fr; }
+      .hero-grid .hero-stat:last-child { grid-column: auto; }
+      .goal-tab .goal-icon { font-size: 15px; margin-bottom: 2px; }
+      .goal-tab .goal-name { font-size: 11px; }
     }
   </style>
 </head>
@@ -363,24 +379,24 @@
               <h1 class="site-title">Calculateur Calories</h1>
               <p class="site-sub">Protéines · Glucides · Lipides — adapté à ton activité</p>
           </div>
-          <div class="header-stats" style="margin-left:auto;">
+          <div class="header-stats" style="margin-left:auto; display:flex; gap:8px; flex-wrap:wrap;">
               <a href="index.html" style="
           display:inline-flex; align-items:center; gap:6px;
-          padding:7px 14px; border-radius:99px;
+          padding:7px 12px; border-radius:99px;
           border:0.5px solid var(--border); background:var(--surface);
           font-size:13px; color:var(--text2); text-decoration:none;
-          transition:border-color 0.15s;
+          transition:border-color 0.15s; white-space:nowrap;
         " onmouseover="this.style.borderColor='var(--border2)'" onmouseout="this.style.borderColor='var(--border)'">
                   ← Programme
               </a>
               <a href="repas.html" style="
           display:inline-flex; align-items:center; gap:6px;
-          padding:7px 14px; border-radius:99px;
+          padding:7px 12px; border-radius:99px;
           border:0.5px solid var(--border); background:var(--surface);
           font-size:13px; color:var(--text2); text-decoration:none;
-          transition:border-color 0.15s;
+          transition:border-color 0.15s; white-space:nowrap;
         " onmouseover="this.style.borderColor='var(--border2)'" onmouseout="this.style.borderColor='var(--border)'">
-                  ← Repas
+                  Repas
               </a>
           </div>
       </div>

@@ -5,6 +5,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Programme Musculation — Haut du Corps</title>
   <link rel="stylesheet" href="style.css" />
+  <style>
+    @media (max-width: 660px) {
+      .header-stats .stat { display: none; }
+      .header-stats {
+        display: flex !important;
+        gap: 6px;
+        margin-left: auto;
+        flex-wrap: nowrap;
+      }
+    }
+  </style>
 </head>
 <body>
 
@@ -21,20 +32,20 @@
         <div class="stat"><span class="stat-val">8kg</span><span class="stat-label">max</span></div>
         <a href="calories.html" style="
           display:inline-flex; align-items:center; gap:6px;
-          padding:7px 14px; border-radius:99px;
+          padding:7px 12px; border-radius:99px;
           background:#EEEDFE; border:1px solid rgba(83,74,183,0.3);
           font-size:13px; font-weight:500; color:#3C3489; text-decoration:none;
-          transition:background 0.15s;
+          transition:background 0.15s; white-space:nowrap;
           margin-left:8px;
         " onmouseover="this.style.background='#E0DEFF'" onmouseout="this.style.background='#EEEDFE'">
-          🔥 Calories &amp; Macros
+          🔥 Calories
         </a>
-        <a href="REPAS.html" style="
+        <a href="repas.html" style="
           display:inline-flex; align-items:center; gap:6px;
-          padding:7px 14px; border-radius:99px;
+          padding:7px 12px; border-radius:99px;
           background:#EEEDFE; border:1px solid rgba(83,74,183,0.3);
           font-size:13px; font-weight:500; color:#3C3489; text-decoration:none;
-          transition:background 0.15s;
+          transition:background 0.15s; white-space:nowrap;
           margin-left:8px;
         " onmouseover="this.style.background='#E0DEFF'" onmouseout="this.style.background='#EEEDFE'">
           Repas
