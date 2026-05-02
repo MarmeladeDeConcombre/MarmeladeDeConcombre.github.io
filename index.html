@@ -2198,8 +2198,13 @@
         function deleteIng(id) {
             if (!confirm('Supprimer ?')) return;
             window.ingredients = window.ingredients.filter(i => i.id !== id);
+            // Purge les entrées du repas qui référencent cet ingrédient supprimé
+            const mealBefore = window.meal.length;
+            window.meal = window.meal.filter(item => item.ingId !== id);
             window.saveIngredients();
+            window.saveMeal(); // toujours sauvegarder pour nettoyer Firebase même si le repas n'a pas changé
             renderIngDb();
+            if (window.meal.length !== mealBefore) renderMeal();
         }
 
         /* ── Init ── */
