@@ -170,6 +170,9 @@ body {
 .tag-upper { background: #EEEDFE; color: #3C3489; }
 .tag-full  { background: var(--coral-bg); color: var(--coral); }
 .tag-rest  { background: #f0f0f0; color: var(--text3); border: 0.5px solid var(--border); }
+.tag-push  { background: #EEEDFE; color: #3C3489; }
+.tag-pull  { background: #E6F4EA; color: #1A5C35; }
+.tag-legs  { background: #FEF3EE; color: #7A3010; }
 
 /* ─── Detail panel ───────────────────────────────────── */
 .detail {
